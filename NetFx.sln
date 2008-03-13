@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetFx", "NetFx.csproj", "{A3B3F0C9-5ECC-4B8D-BD27-4BEA94277D28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetFx", "Source\NetFx.csproj", "{A3B3F0C9-5ECC-4B8D-BD27-4BEA94277D28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetFx.UnitTests", "..\UnitTests\NetFx.UnitTests.csproj", "{96945E66-41EE-499F-A9AB-F033309C57FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetFx.UnitTests", "UnitTests\NetFx.UnitTests.csproj", "{96945E66-41EE-499F-A9AB-F033309C57FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
