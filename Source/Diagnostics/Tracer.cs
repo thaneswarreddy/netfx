@@ -1,14 +1,87 @@
 ﻿/* 
  * Dependencies: System.Diagnostics
- * 
+ * Authors: Daniel Cazzulino - daniel@cazzulino.com
  */
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace NetFx
+namespace System.Diagnostics
 {
+	/// <summary>
+	/// Abstraction of <see cref="TraceSource"/> used by 
+	/// components that want to statically cache their 
+	/// own instances of the trace source.
+	/// </summary>
+	/// <remarks>
+	/// If you're using <see cref="Tracer"/> tracing methods 
+	/// directly, you don't need to deal with this interface.
+	/// </remarks>
+	/// <example>
+	/// In this example, a component is caching statically 
+	/// an instance of an <see cref="ITraceSource"/> to 
+	/// reuse whenever it needs to trace information:
+	/// <code>
+	/// public class MyComponent
+	/// {
+	///		static readonly ITraceSource traceSource = Tracer.GetSource(typeof(MyComponent));
+	///		
+	///		public MyComponent()
+	///		{
+	///			traceSource.TraceInformation("MyComponent constructed!");
+	///		}
+	/// }
+	/// </code>
+	/// </example>
+	internal interface ITraceSource
+	{
+		/// <summary>
+		/// Supports the unit tests, do not use directly.
+		/// </summary>
+		/// <remarks>
+		/// Exposes the undelying <see cref="TraceSource"/>s composed 
+		/// by this source to enable testing of the <see cref="Tracer"/> class.
+		/// </remarks>
+		IEnumerable<TraceSource> Sources { get; }
+		/// <summary>
+		/// See <see cref="TraceSource.Name"/>.
+		/// </summary>
+		void Flush();
+		/// <summary>
+		/// See <see cref="TraceData(TraceEventType, int, object)"/>.
+		/// </summary>
+		void TraceData(TraceEventType eventType, int id, object data);
+		/// <summary>
+		/// See <see cref="TraceSource.TraceData(TraceEventType, int, params object[])"/>.
+		/// </summary>
+		void TraceData(TraceEventType eventType, int id, params object[] data);
+		/// <summary>
+		/// See <see cref="TraceSource.TraceEvent(TraceEventType, int)"/>.
+		/// </summary>
+		void TraceEvent(TraceEventType eventType, int id);
+		/// <summary>
+		/// See <see cref="TraceSource.TraceEvent(TraceEventType, int, string, params object[])"/>.
+		/// </summary>
+		void TraceEvent(TraceEventType eventType, int id, string format, params object[] args);
+		/// <summary>
+		/// See <see cref="TraceSource.TraceEvent(TraceEventType, int, string)"/>.
+		/// </summary>
+		void TraceEvent(TraceEventType eventType, int id, string message);
+		/// <summary>
+		/// See <see cref="TraceSource.TraceInformation(string)"/>.
+		/// </summary>
+		void TraceInformation(string message);
+		/// <summary>
+		/// See <see cref="TraceSource.TraceInformation(string, params object[])"/>.
+		/// </summary>
+		void TraceInformation(string format, params object[] args);
+		/// <summary>
+		/// See <see cref="TraceSource.TraceTransfer(int, string, Guid)"/>.
+		/// </summary>
+		void TraceTransfer(int id, string message, Guid relatedActivityId);
+	}
+
 	/// <summary>
 	/// Provides uniformity for tracing, by providing a consistent way of 
 	/// logging and leverage System.Diagnostics support.
@@ -223,6 +296,70 @@ namespace NetFx
 
 			entry.NamespaceSource.TraceEvent(TraceEventType.Error, 0, logmessage);
 			entry.TypeSource.TraceEvent(TraceEventType.Error, 0, logmessage);
+		}
+
+		/// <summary>
+		/// Retrieves a <see cref="ITraceSource"/> that can be 
+		/// used by component <typeparamref name="T"/> to issue 
+		/// trace statements.
+		/// </summary>
+		/// <typeparam name="T">Type of the component that will perform the logging.</typeparam>
+		internal static ITraceSource GetSourceFor<T>()
+		{
+			return new CompositeTraceSource();
+		}
+
+		private class CompositeTraceSource : ITraceSource
+		{
+			public IEnumerable<TraceSource> Sources
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public void Flush()
+			{
+				throw new NotImplementedException();
+			}
+
+			public void TraceData(TraceEventType eventType, int id, object data)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void TraceData(TraceEventType eventType, int id, params object[] data)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void TraceEvent(TraceEventType eventType, int id)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void TraceEvent(TraceEventType eventType, int id, string format, params object[] args)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void TraceEvent(TraceEventType eventType, int id, string message)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void TraceInformation(string message)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void TraceInformation(string format, params object[] args)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void TraceTransfer(int id, string message, Guid relatedActivityId)
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }
