@@ -5,7 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace System.Diagnostics
 {
@@ -43,6 +45,7 @@ namespace System.Diagnostics
 		/// Exposes the undelying <see cref="TraceSource"/>s composed 
 		/// by this source to enable testing of the <see cref="Tracer"/> class.
 		/// </remarks>
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		IEnumerable<TraceSource> Sources { get; }
 		/// <summary>
 		/// See <see cref="TraceSource.Name"/>.
@@ -80,6 +83,14 @@ namespace System.Diagnostics
 		/// See <see cref="TraceSource.TraceTransfer(int, string, Guid)"/>.
 		/// </summary>
 		void TraceTransfer(int id, string message, Guid relatedActivityId);
+		/// <summary>
+		/// Traces the given exception, using the format and arguments.
+		/// </summary>
+		void TraceError(Exception exception, string format, params object[] args);
+		/// <summary>
+		/// Traces the given exception and its corresponding message.
+		/// </summary>
+		void TraceError(Exception exception, string message);
 	}
 
 	/// <summary>
@@ -103,95 +114,9 @@ namespace System.Diagnostics
 	/// </remarks>
 	internal static class Tracer
 	{
-		static Dictionary<Type, SourceEntry> sources = new Dictionary<Type, SourceEntry>();
-		static List<TraceListener> additionalListeners = new List<TraceListener>();
-		static Dictionary<string, SourceLevels> defaultLevels = new Dictionary<string, SourceLevels>();
-
-		class SourceEntry
-		{
-			public TraceSource TypeSource;
-			public TraceSource NamespaceSource;
-		}
-
-		/// <summary>
-		/// Sets the logging level of the given trace source.
-		/// </summary>
-		/// <param name="sourceName">Name of the trace source to change.</param>
-		/// <param name="level">The new logging level.</param>
-		internal static void SetLoggingLevel(string sourceName, SourceLevels level)
-		{
-			foreach (var item in sources)
-			{
-				if (item.Key.FullName == sourceName)
-				{
-					item.Value.TypeSource.Switch.Level = level;
-				}
-				else if (item.Key.Namespace == sourceName)
-				{
-					item.Value.NamespaceSource.Switch.Level = level;
-				}
-			}
-
-			defaultLevels[sourceName] = level;
-		}
-
-		/// <summary>
-		/// Adds a new listener to existing and new trace sources.
-		/// </summary>
-		/// <param name="sourceName">Name of the existing trace source to add the listener to.</param>
-		/// <param name="listener">The new listener to register.</param>
-		internal static void AddListener(string sourceName, TraceListener listener)
-		{
-			foreach (var item in sources)
-			{
-				if (item.Key.FullName == sourceName)
-				{
-					item.Value.TypeSource.Listeners.Add(listener);
-				}
-				else if (item.Key.Namespace == sourceName)
-				{
-					item.Value.NamespaceSource.Listeners.Add(listener);
-				}
-			}
-
-			// TODO: this will cause the listener to be added to any new 
-			// source, not only the one specified as the sourceName.
-			additionalListeners.Add(listener);
-		}
-
-		/// <summary>
-		/// Retrieves a source entry from the cache, or creates a new one.
-		/// </summary>
-		private static SourceEntry GetEntry(Type sourceType)
-		{
-			SourceEntry entry;
-			if (!sources.TryGetValue(sourceType, out entry))
-			{
-				entry = new SourceEntry();
-				entry.TypeSource = new TraceSource(sourceType.FullName);
-
-				entry.NamespaceSource = new TraceSource(sourceType.Namespace);
-				sources.Add(sourceType, entry);
-
-				// See if we should change default level
-				if (defaultLevels.ContainsKey(sourceType.FullName))
-				{
-					entry.TypeSource.Switch.Level = defaultLevels[sourceType.FullName];
-				}
-				if (defaultLevels.ContainsKey(sourceType.Namespace))
-				{
-					entry.NamespaceSource.Switch.Level = defaultLevels[sourceType.Namespace];
-				}
-
-				foreach (var item in additionalListeners)
-				{
-					entry.NamespaceSource.Listeners.Add(item);
-					entry.TypeSource.Listeners.Add(item);
-				}
-			}
-
-			return entry;
-		}
+		static Dictionary<Type, ITraceSource> cachedCompositeSources = new Dictionary<Type, ITraceSource>();
+		static Dictionary<string, List<TraceListener>> additionalListeners = new Dictionary<string, List<TraceListener>>();
+		static Dictionary<string, TraceSource> cachedBaseSources = new Dictionary<string, TraceSource>();
 
 		/// <summary>
 		/// See TraceSource.TraceData.
@@ -199,9 +124,7 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceData(Type sourceType, TraceEventType eventType, int id, params object[] data)
 		{
-			SourceEntry entry = GetEntry(sourceType);
-			entry.NamespaceSource.TraceData(eventType, id, data);
-			entry.TypeSource.TraceData(eventType, id, data);
+			GetSourceFor(sourceType).TraceData(eventType, id, data);
 		}
 
 		/// <summary>
@@ -210,9 +133,7 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceData(Type sourceType, TraceEventType eventType, int id, object data)
 		{
-			SourceEntry entry = GetEntry(sourceType);
-			entry.NamespaceSource.TraceData(eventType, id, data);
-			entry.TypeSource.TraceData(eventType, id, data);
+			GetSourceFor(sourceType).TraceData(eventType, id, data);
 		}
 
 		/// <summary>
@@ -221,9 +142,7 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceEvent(Type sourceType, TraceEventType eventType, int id)
 		{
-			SourceEntry entry = GetEntry(sourceType);
-			entry.NamespaceSource.TraceEvent(eventType, id);
-			entry.TypeSource.TraceEvent(eventType, id);
+			GetSourceFor(sourceType).TraceEvent(eventType, id);
 		}
 
 		/// <summary>
@@ -232,9 +151,7 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceEvent(Type sourceType, TraceEventType eventType, int id, string message)
 		{
-			SourceEntry entry = GetEntry(sourceType);
-			entry.NamespaceSource.TraceEvent(eventType, id, message);
-			entry.TypeSource.TraceEvent(eventType, id, message);
+			GetSourceFor(sourceType).TraceEvent(eventType, id, message);
 		}
 
 		/// <summary>
@@ -243,9 +160,7 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceEvent(Type sourceType, TraceEventType eventType, int id, string format, params object[] args)
 		{
-			SourceEntry entry = GetEntry(sourceType);
-			entry.NamespaceSource.TraceEvent(eventType, id, format, args);
-			entry.TypeSource.TraceEvent(eventType, id, format, args);
+			GetSourceFor(sourceType).TraceEvent(eventType, id, format, args);
 		}
 
 		/// <summary>
@@ -254,9 +169,7 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceInformation(Type sourceType, string message)
 		{
-			SourceEntry entry = GetEntry(sourceType);
-			entry.NamespaceSource.TraceInformation(message);
-			entry.TypeSource.TraceInformation(message);
+			GetSourceFor(sourceType).TraceInformation(message);
 		}
 
 		/// <summary>
@@ -265,9 +178,7 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceInformation(Type sourceType, string format, params object[] args)
 		{
-			SourceEntry entry = GetEntry(sourceType);
-			entry.NamespaceSource.TraceInformation(format, args);
-			entry.TypeSource.TraceInformation(format, args);
+			GetSourceFor(sourceType).TraceInformation(format, args);
 		}
 
 		/// <summary>
@@ -276,12 +187,9 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceError(Type sourceType, Exception exception, string message)
 		{
-			SourceEntry entry = GetEntry(sourceType);
-
 			string logmessage = message + Environment.NewLine + exception.ToString();
 
-			entry.NamespaceSource.TraceEvent(TraceEventType.Error, 0, logmessage);
-			entry.TypeSource.TraceEvent(TraceEventType.Error, 0, logmessage);
+			GetSourceFor(sourceType).TraceEvent(TraceEventType.Error, 0, logmessage);
 		}
 
 		/// <summary>
@@ -290,12 +198,46 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceError(Type sourceType, Exception exception, string format, params object[] args)
 		{
-			SourceEntry entry = GetEntry(sourceType);
+		    string logmessage = format + Environment.NewLine + exception.ToString();
 
-			string logmessage = format + Environment.NewLine + exception.ToString();
+			GetSourceFor(sourceType).TraceEvent(TraceEventType.Error, 0, logmessage, args);
+		}
 
-			entry.NamespaceSource.TraceEvent(TraceEventType.Error, 0, logmessage);
-			entry.TypeSource.TraceEvent(TraceEventType.Error, 0, logmessage);
+		/// <summary>
+		/// Retrieves a <see cref="ITraceSource"/> that can be 
+		/// used by component of type <paramref name="sourceType"/> to issue 
+		/// trace statements.
+		/// </summary>
+		internal static ITraceSource GetSourceFor(Type sourceType)
+		{
+			ITraceSource source;
+
+			if (!cachedCompositeSources.TryGetValue(sourceType, out source))
+			{
+				lock (cachedCompositeSources)
+				{
+					if (!cachedCompositeSources.TryGetValue(sourceType, out source))
+					{
+						var parts = sourceType.FullName.Split('.');
+
+						string sourceName = parts[0];
+						var innerSources = new List<TraceSource>();
+
+						innerSources.Add(GetTraceSource(sourceName));
+
+						for (int i = 1; i < parts.Length; i++)
+						{
+							sourceName += "." + parts[i];
+							innerSources.Add(GetTraceSource(sourceName));
+						}
+
+						source = new CompositeTraceSource(innerSources);
+						cachedCompositeSources.Add(sourceType, source);
+					}
+				}
+			}
+
+			return source;
 		}
 
 		/// <summary>
@@ -306,59 +248,143 @@ namespace System.Diagnostics
 		/// <typeparam name="T">Type of the component that will perform the logging.</typeparam>
 		internal static ITraceSource GetSourceFor<T>()
 		{
-			return new CompositeTraceSource();
+			return GetSourceFor(typeof(T));
+		}
+
+		private static TraceSource GetTraceSource(string sourceName)
+		{
+			TraceSource source;
+			if (!cachedBaseSources.TryGetValue(sourceName, out source))
+			{
+				lock (cachedBaseSources)
+				{
+					if (!cachedBaseSources.TryGetValue(sourceName, out source))
+					{
+						source = AddAdditionalListeners(new TraceSource(sourceName));
+						cachedBaseSources.Add(sourceName, source);
+					}
+				}
+			}
+
+			return source;
+		}
+
+		private static TraceSource AddAdditionalListeners(TraceSource source)
+		{
+			List<TraceListener> additional;
+			if (additionalListeners.TryGetValue(source.Name, out additional))
+			{
+				additional.ForEach(listener => source.Listeners.Add(listener));
+			}
+
+			return source;
+		}
+
+		internal static void AddListener(string sourceName, TraceListener listener)
+		{
+			var query = from keyPair in cachedCompositeSources
+						where keyPair.Key.FullName.StartsWith(sourceName)
+						from source in keyPair.Value.Sources
+						where source.Name == sourceName
+						select source;
+
+			query.ForEach(source => source.Listeners.Add(listener));
+
+			List<TraceListener> listeners;
+
+			if (!additionalListeners.TryGetValue(sourceName, out listeners))
+			{
+				lock (additionalListeners)
+				{
+					if (!additionalListeners.TryGetValue(sourceName, out listeners))
+					{
+						listeners = new List<TraceListener>();
+						additionalListeners.Add(sourceName, listeners);
+					}
+				}
+			}
+
+			listeners.Add(listener);
+		}
+
+		internal static void SetLoggingLevel(string sourceName, SourceLevels sourceLevels)
+		{
+			TraceSource source = GetTraceSource(sourceName);
+
+			source.Switch.Level = sourceLevels;
 		}
 
 		private class CompositeTraceSource : ITraceSource
 		{
+			List<TraceSource> sources;
+
+			public CompositeTraceSource(List<TraceSource> sources)
+			{
+				this.sources = sources;
+			}
+
 			public IEnumerable<TraceSource> Sources
 			{
-				get { throw new NotImplementedException(); }
+				get { return sources; }
 			}
 
 			public void Flush()
 			{
-				throw new NotImplementedException();
+				sources.ForEach(source => source.Flush());
 			}
 
 			public void TraceData(TraceEventType eventType, int id, object data)
 			{
-				throw new NotImplementedException();
+				sources.ForEach(source => source.TraceData(eventType, id, data));
 			}
 
 			public void TraceData(TraceEventType eventType, int id, params object[] data)
 			{
-				throw new NotImplementedException();
+				sources.ForEach(source => source.TraceData(eventType, id, data));
 			}
 
 			public void TraceEvent(TraceEventType eventType, int id)
 			{
-				throw new NotImplementedException();
+				sources.ForEach(source => source.TraceEvent(eventType, id));
 			}
 
 			public void TraceEvent(TraceEventType eventType, int id, string format, params object[] args)
 			{
-				throw new NotImplementedException();
+				sources.ForEach(source => source.TraceEvent(eventType, id, format, args));
 			}
 
 			public void TraceEvent(TraceEventType eventType, int id, string message)
 			{
-				throw new NotImplementedException();
+				sources.ForEach(source => source.TraceEvent(eventType, id, message));
 			}
 
 			public void TraceInformation(string message)
 			{
-				throw new NotImplementedException();
+				sources.ForEach(source => source.TraceInformation(message));
 			}
 
 			public void TraceInformation(string format, params object[] args)
 			{
-				throw new NotImplementedException();
+				sources.ForEach(source => source.TraceInformation(format, args));
 			}
 
 			public void TraceTransfer(int id, string message, Guid relatedActivityId)
 			{
-				throw new NotImplementedException();
+				sources.ForEach(source => source.TraceTransfer(id, message, relatedActivityId));
+			}
+
+			public void TraceError(Exception exception, string message)
+			{
+				string logmessage = message + Environment.NewLine + exception.ToString();
+
+				sources.ForEach(source => source.TraceEvent(TraceEventType.Error, 0, logmessage));
+			}
+
+			public void TraceError(Exception exception, string format, params object[] args)
+			{
+				string logmessage = format + Environment.NewLine + exception.ToString();
+
+				sources.ForEach(source => source.TraceEvent(TraceEventType.Error, 0, logmessage, args));
 			}
 		}
 	}
