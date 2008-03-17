@@ -91,6 +91,14 @@ namespace System.Diagnostics
 		/// Traces the given exception and its corresponding message.
 		/// </summary>
 		void TraceError(Exception exception, string message);
+		/// <summary>
+		/// Traces a warning, using the format and arguments to build the message.
+		/// </summary>
+		void TraceWarning(string format, params object[] args);
+		/// <summary>
+		/// Traces a warning with the given message.
+		/// </summary>
+		void TraceWarning(string message);
 	}
 
 	/// <summary>
@@ -282,11 +290,11 @@ namespace System.Diagnostics
 
 		internal static void AddListener(string sourceName, TraceListener listener)
 		{
-			var query = from keyPair in cachedCompositeSources
+			var query = (from keyPair in cachedCompositeSources
 						where keyPair.Key.FullName.StartsWith(sourceName)
 						from source in keyPair.Value.Sources
 						where source.Name == sourceName
-						select source;
+						select source).ToList();
 
 			query.ForEach(source => source.Listeners.Add(listener));
 
@@ -385,6 +393,16 @@ namespace System.Diagnostics
 				string logmessage = format + Environment.NewLine + exception.ToString();
 
 				sources.ForEach(source => source.TraceEvent(TraceEventType.Error, 0, logmessage, args));
+			}
+
+			public void TraceWarning(string format, params object[] args)
+			{
+				sources.ForEach(source => source.TraceEvent(TraceEventType.Warning, 0, format, args));
+			}
+
+			public void TraceWarning(string message)
+			{
+				sources.ForEach(source => source.TraceEvent(TraceEventType.Warning, 0, message));
 			}
 		}
 	}
