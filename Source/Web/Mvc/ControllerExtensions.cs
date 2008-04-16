@@ -30,6 +30,20 @@ namespace System.Web.Mvc
 		/// <param name="action">The action containing the redirect.</param>
 		public static void RedirectToAction<T>(this Controller controller, Expression<Action<T>> action)
 		{
+			string target = controller.ActionUrl<T>(action);
+			controller.HttpContext.Response.Redirect(target);
+		}
+
+		/// <summary>
+		/// Returns the URL for performing an invokation to an action based
+		/// on an expression representing an invocation to a controller method
+		/// that may include arguments.
+		/// </summary>
+		/// <typeparam name="T">Type of the controller to call to. Can be omitted as it can be inferred from the action type.</typeparam>
+		/// <param name="controller">The controller performing the call.</param>
+		/// <param name="action">The action containing the call.</param>
+		public static string ActionUrl<T>(this Controller controller, Expression<Action<T>> action)
+		{
 			MethodCallExpression call = action.Body as MethodCallExpression;
 			if (call == null)
 			{
@@ -59,7 +73,7 @@ namespace System.Web.Mvc
 				target = vpd.VirtualPath;
 			}
 
-			controller.HttpContext.Response.Redirect(target);
+			return target;
 		}
 	}
 }
