@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using System.ServiceModel;
-using System.ServiceModel.Web;
+﻿using System.Globalization;
 using System.Net;
-using System.Globalization;
+using System.ServiceModel.Web;
+using NUnit.Framework;
 
 namespace System.ServiceModel.UnitTests
 {

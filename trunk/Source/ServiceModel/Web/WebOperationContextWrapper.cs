@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel.Web;
-
+﻿
 namespace System.ServiceModel.Web
 {
 	public class WebOperationContextWrapper : IWebOperationContext

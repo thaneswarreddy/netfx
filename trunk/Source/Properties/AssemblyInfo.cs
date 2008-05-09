@@ -1,7 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System;
 
 [assembly: AssemblyTitle("NetFx")]
 [assembly: AssemblyDescription("Miscelaneous components that can be reused as source, one file each.")]

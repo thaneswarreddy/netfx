@@ -204,7 +204,7 @@ namespace System.Diagnostics
 		[Conditional("TRACE")]
 		public static void TraceError(Type sourceType, Exception exception, string format, params object[] args)
 		{
-		    string logmessage = format + Environment.NewLine + exception.ToString();
+			string logmessage = format + Environment.NewLine + exception.ToString();
 
 			GetSourceFor(sourceType).TraceEvent(TraceEventType.Error, 0, logmessage, args);
 		}
@@ -289,10 +289,10 @@ namespace System.Diagnostics
 		internal static void AddListener(string sourceName, TraceListener listener)
 		{
 			var query = (from keyPair in cachedCompositeSources
-						where keyPair.Key.FullName.StartsWith(sourceName)
-						from source in keyPair.Value.Sources
-						where source.Name == sourceName
-						select source).ToList();
+							 where keyPair.Key.FullName.StartsWith(sourceName)
+							 from source in keyPair.Value.Sources
+							 where source.Name == sourceName
+							 select source).ToList();
 
 			query.ForEach(source => source.Listeners.Add(listener));
 
