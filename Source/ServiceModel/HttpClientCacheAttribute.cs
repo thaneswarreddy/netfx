@@ -9,11 +9,11 @@ namespace System.ServiceModel
 	/// <summary>
 	/// Server behavior to control the caching of the results. It can be applied at the service or operation level.
 	/// </summary>
-	internal class HttpCacheAttribute : Attribute, IOperationBehavior, IContractBehavior, IParameterInspector, IDispatchMessageInspector
+	internal class HttpClientCacheAttribute : Attribute, IOperationBehavior, IContractBehavior, IParameterInspector, IDispatchMessageInspector
 	{
 		private double maxSeconds;
 
-		public HttpCacheAttribute(double maxSeconds)
+		public HttpClientCacheAttribute(double maxSeconds)
 		{
 			this.maxSeconds = maxSeconds;
 		}

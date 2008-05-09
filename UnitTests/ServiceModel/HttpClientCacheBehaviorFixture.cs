@@ -11,7 +11,7 @@ using System.Globalization;
 namespace System.ServiceModel.UnitTests
 {
 	[TestFixture]
-	public class HttpCachingBehaviorFixture
+	public class HttpClientCacheBehaviorFixture
 	{
 		[Test]
 		public void OperationLevelExpiration()
@@ -84,25 +84,25 @@ namespace System.ServiceModel.UnitTests
 
 		class TestServiceImpl : ITestService
 		{
-			[HttpCache(500)]
+			[HttpClientCache(500)]
 			public void Foo()
 			{
 			}
 
-			[HttpCache(0)]
+			[HttpClientCache(0)]
 			public void Bar()
 			{
 			}
 		}
 
-		[HttpCache(500)]
+		[HttpClientCache(500)]
 		class TestServiceImpl2 : ITestService
 		{
 			public void Foo()
 			{
 			}
 
-			[HttpCache(100)]
+			[HttpClientCache(100)]
 			public void Bar()
 			{
 			}

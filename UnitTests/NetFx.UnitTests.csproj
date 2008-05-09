@@ -66,7 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Linq\EnumerableExtensionsFixture.cs" />
-    <Compile Include="ServiceModel\HttpCachingBehaviorFixture.cs" />
+    <Compile Include="ServiceModel\HttpClientCacheBehaviorFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Diagnostics\TracerFixture.cs" />
     <Compile Include="Web\Mvc\ControllerExtensionsFixture.cs" />
