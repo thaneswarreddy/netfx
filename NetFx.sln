@@ -5,6 +5,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetFx", "Source\NetFx.cspro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetFx.UnitTests", "UnitTests\NetFx.UnitTests.csproj", "{96945E66-41EE-499F-A9AB-F033309C57FA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{8C800C03-6E03-4963-8EEC-D1ECEF17F82A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceModel", "Source\ServiceModel\ServiceModel.csproj", "{ECECCF97-761E-43D3-9178-D22BCB5AC37B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,8 +23,15 @@ Global
 		{96945E66-41EE-499F-A9AB-F033309C57FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96945E66-41EE-499F-A9AB-F033309C57FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96945E66-41EE-499F-A9AB-F033309C57FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ECECCF97-761E-43D3-9178-D22BCB5AC37B} = {8C800C03-6E03-4963-8EEC-D1ECEF17F82A}
 	EndGlobalSection
 EndGlobal

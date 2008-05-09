@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel.Web;
-
+﻿
 namespace System.ServiceModel.Web
 {
 	public class IncomingWebRequestContextWrapper : IIncomingWebRequestContext
@@ -14,7 +9,7 @@ namespace System.ServiceModel.Web
 		{
 			this.context = context;
 		}
-		
+
 		#region IIncomingWebRequestContext Members
 
 		public string Accept
