@@ -1,7 +1,11 @@
 ﻿
 namespace System.ServiceModel.Web
 {
+#if NetFx	
 	public class IncomingWebRequestContextWrapper : IIncomingWebRequestContext
+#else
+	internal class IncomingWebRequestContextWrapper : IIncomingWebRequestContext
+#endif
 	{
 		private IncomingWebRequestContext context;
 

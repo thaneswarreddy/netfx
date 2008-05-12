@@ -2,7 +2,11 @@
 
 namespace System.ServiceModel.Web
 {
+#if NetFx	
 	public interface IIncomingWebRequestContext
+#else
+	internal interface IIncomingWebRequestContext
+#endif
 	{
 		string Accept { get; }
 		long ContentLength { get; }

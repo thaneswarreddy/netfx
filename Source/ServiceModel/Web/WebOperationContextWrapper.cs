@@ -1,7 +1,11 @@
 ﻿
 namespace System.ServiceModel.Web
 {
+#if NetFx	
 	public class WebOperationContextWrapper : IWebOperationContext
+#else
+	internal class WebOperationContextWrapper : IWebOperationContext
+#endif
 	{
 		private WebOperationContext context;
 

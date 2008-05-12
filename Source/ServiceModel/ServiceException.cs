@@ -3,7 +3,11 @@ using System.Net;
 
 namespace System.ServiceModel
 {
+#if NetFx	
 	public class ServiceException : Exception
+#else
+	internal class ServiceException : Exception
+#endif
 	{
 		HttpStatusCode statusCode;
 
