@@ -10,9 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceModel", "Source\ServiceModel\ServiceModel.csproj", "{ECECCF97-761E-43D3-9178-D22BCB5AC37B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{30DF7443-F068-4EB1-9645-A68B66AEEC0A}"
-	ProjectSection(SolutionItems) = preProject
-		Source\Guard.cs = Source\Guard.cs
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diagnostics", "Source\Diagnostics\Diagnostics.csproj", "{354D0AA2-E7AF-4963-A3BA-8C9C81DF480D}"
 EndProject

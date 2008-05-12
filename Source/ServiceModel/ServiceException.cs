@@ -27,6 +27,5 @@ namespace System.ServiceModel
 		{
 			get { return statusCode; }
 		}
-
 	}
 }

@@ -34,7 +34,11 @@ namespace System.Diagnostics
 	/// }
 	/// </code>
 	/// </example>
+#if NetFx	
+	public interface ITraceSource
+#else
 	internal interface ITraceSource
+#endif
 	{
 		/// <summary>
 		/// Supports the unit tests, do not use directly.
@@ -118,7 +122,11 @@ namespace System.Diagnostics
 	/// from that point on.
 	/// </para>
 	/// </remarks>
+#if NetFx	
+	public static class Tracer
+#else
 	internal static class Tracer
+#endif
 	{
 		static Dictionary<Type, ITraceSource> cachedCompositeSources = new Dictionary<Type, ITraceSource>();
 		static Dictionary<string, List<TraceListener>> additionalListeners = new Dictionary<string, List<TraceListener>>();
