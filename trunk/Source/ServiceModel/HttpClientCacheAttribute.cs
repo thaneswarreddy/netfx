@@ -9,7 +9,11 @@ namespace System.ServiceModel
 	/// <summary>
 	/// Server behavior to control the caching of the results. It can be applied at the service or operation level.
 	/// </summary>
+#if NetFx	
+	public class HttpClientCacheAttribute : Attribute, IOperationBehavior, IContractBehavior, IParameterInspector, IDispatchMessageInspector
+#else
 	internal class HttpClientCacheAttribute : Attribute, IOperationBehavior, IContractBehavior, IParameterInspector, IDispatchMessageInspector
+#endif
 	{
 		private double maxSeconds;
 

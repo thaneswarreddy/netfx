@@ -3,7 +3,11 @@ using System.Globalization;
 
 namespace System
 {
+#if NetFx
+	public static class Guard
+#else
 	internal static class Guard
+#endif
 	{
 		/// <summary>
 		/// Checks an argument to ensure it isn't null.
