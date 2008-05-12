@@ -2,7 +2,11 @@
 
 namespace System.ServiceModel.Web
 {
+#if NetFx	
 	public interface IOutgoingWebResponseContext
+#else
+	internal interface IOutgoingWebResponseContext
+#endif
 	{
 		void SetStatusAsCreated(Uri locationUri);
 		void SetStatusAsNotFound();
