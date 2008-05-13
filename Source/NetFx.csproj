@@ -75,6 +75,7 @@
     <Compile Include="ServiceModel\Configuration\ErrorHandlerExtensionElement.cs" />
     <Compile Include="ServiceModel\Description\ErrorHanderBehavior.cs" />
     <Compile Include="ServiceModel\Description\ErrorHandler.cs" />
+    <Compile Include="ServiceModel\DisposableChannel.cs" />
     <Compile Include="ServiceModel\HttpClientCacheAttribute.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="ServiceModel\ServiceException.cs" />
