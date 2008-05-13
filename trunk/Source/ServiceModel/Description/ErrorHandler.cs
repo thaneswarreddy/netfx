@@ -1,6 +1,7 @@
 ﻿using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
+using System.Text;
 
 namespace System.ServiceModel.Description
 {
@@ -43,11 +44,26 @@ namespace System.ServiceModel.Description
 			if (this.Context != null)
 			{
 				this.Context.OutgoingResponse.StatusCode = ((ServiceException)error).StatusCode;
-				this.Context.OutgoingResponse.StatusDescription = error.Message;
+
+				// Strip invalid chars.
+				var sb = new StringBuilder();
+				for (int i = 0; i < error.Message.Length; i++)
+				{
+					char ch = (char)('\x00ff' & error.Message[i]);
+					if (((ch <= '\x001f') && (ch != '\t')) || (ch == '\x007f'))
+					{
+						// Specified value has invalid Control characters.
+						// See HttpListenerResponse.StatusDescription
+					}
+					else
+					{
+						sb.Append(ch);
+					}
+				}
+
+				this.Context.OutgoingResponse.StatusDescription = sb.ToString();
 				this.Context.OutgoingResponse.SuppressEntityBody = false;
 			}
 		}
 	}
-
-
 }
