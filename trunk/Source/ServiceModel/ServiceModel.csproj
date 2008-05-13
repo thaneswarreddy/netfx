@@ -62,6 +62,7 @@
     <Compile Include="Configuration\ErrorHandlerExtensionElement.cs" />
     <Compile Include="Description\ErrorHanderBehavior.cs" />
     <Compile Include="Description\ErrorHandler.cs" />
+    <Compile Include="DisposableChannel.cs" />
     <Compile Include="HttpClientCacheAttribute.cs" />
     <Compile Include="ServiceException.cs" />
     <Compile Include="Web\IIncomingWebRequestContext.cs" />
