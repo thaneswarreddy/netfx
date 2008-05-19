@@ -43,6 +43,9 @@ namespace System.ServiceModel.Description
 
 			if (this.Context != null)
 			{
+				// TODO: to exception shielding
+				// TODO: do logging
+				// TODO: ensure we do special behavior only for ServiceException (check cast)
 				this.Context.OutgoingResponse.StatusCode = ((ServiceException)error).StatusCode;
 
 				// Strip invalid chars.
