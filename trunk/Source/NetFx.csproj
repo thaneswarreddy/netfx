@@ -78,6 +78,10 @@
     <Compile Include="ServiceModel\DisposableChannel.cs" />
     <Compile Include="ServiceModel\HttpClientCacheAttribute.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
+    <Compile Include="ServiceModel\IOperationContext.cs" />
+    <Compile Include="ServiceModel\IServiceSecurityContext.cs" />
+    <Compile Include="ServiceModel\OperationContextWrapper.cs" />
+    <Compile Include="ServiceModel\ServiceSecurityContextWrapper.cs" />
     <Compile Include="ServiceModel\ServiceException.cs" />
     <Compile Include="ServiceModel\Web\IIncomingWebRequestContext.cs" />
     <Compile Include="ServiceModel\Web\IncomingWebRequestContextWrapper.cs" />
