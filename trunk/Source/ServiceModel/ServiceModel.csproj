@@ -60,11 +60,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ErrorHandlerExtensionElement.cs" />
+    <Compile Include="Configuration\UsernameCredentialsElement.cs" />
     <Compile Include="Description\ErrorHanderBehavior.cs" />
     <Compile Include="Description\ErrorHandler.cs" />
     <Compile Include="DisposableChannel.cs" />
     <Compile Include="HttpClientCacheAttribute.cs" />
+    <Compile Include="IOperationContext.cs" />
+    <Compile Include="IServiceSecurityContext.cs" />
+    <Compile Include="OperationContextWrapper.cs" />
     <Compile Include="ServiceException.cs" />
+    <Compile Include="ServiceSecurityContextWrapper.cs" />
     <Compile Include="Web\IIncomingWebRequestContext.cs" />
     <Compile Include="Web\IncomingWebRequestContextWrapper.cs" />
     <Compile Include="Web\IOutgoingWebResponseContext.cs" />
