@@ -73,6 +73,7 @@
     <Compile Include="Linq\EnumerableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceModel\Configuration\ErrorHandlerExtensionElement.cs" />
+    <Compile Include="ServiceModel\Configuration\UsernameCredentialsElement.cs" />
     <Compile Include="ServiceModel\Description\ErrorHanderBehavior.cs" />
     <Compile Include="ServiceModel\Description\ErrorHandler.cs" />
     <Compile Include="ServiceModel\DisposableChannel.cs" />
