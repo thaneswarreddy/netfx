@@ -28,6 +28,12 @@ namespace System.ServiceModel
 			channel = channelFactory.CreateChannel();
 		}
 
+		public DisposableChannel(string endpointConfigurationName)
+		{
+			ChannelFactory<T> channelFactory = new ChannelFactory<T>(endpointConfigurationName);
+			channel = channelFactory.CreateChannel();
+		}
+
 		public T Channel
 		{
 			get { return channel; }
