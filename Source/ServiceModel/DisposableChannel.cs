@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ServiceModel.Channels;
 
 namespace System.ServiceModel
 {
@@ -14,15 +15,15 @@ namespace System.ServiceModel
 	/// <typeparam name="T">Service interface type.</typeparam>
 	public class DisposableChannel<T> : IDisposable
 	{
-		private static ChannelFactory<T> channelFactory;
 		private T channel;
 
-		static DisposableChannel()
+		public DisposableChannel()
 		{
-			channelFactory = new ChannelFactory<T>("*");
+			ChannelFactory<T> channelFactory = new ChannelFactory<T>("*");
+			channel = channelFactory.CreateChannel();
 		}
 
-		public DisposableChannel()
+		public DisposableChannel(ChannelFactory<T> channelFactory)
 		{
 			channel = channelFactory.CreateChannel();
 		}
