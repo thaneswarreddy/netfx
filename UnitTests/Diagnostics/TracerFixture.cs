@@ -52,16 +52,16 @@ namespace System.Diagnostics.UnitTests
 		{
 			var source = Tracer.GetSourceFor<Foo>();
 
-			var mock = new Mock<TraceListener>();
+			var mock = new TextWriterTraceListener();
 
-			Tracer.AddListener("System.Diagnostics", mock.Object);
+			Tracer.AddListener("System.Diagnostics", mock);
 
 			// No other sources should have the listener
 			Assert.AreEqual(0,
 				(from ts in source.Sources
 				 where ts.Name != "System.Diagnostics"
 				 from ls in ts.Listeners.OfType<TraceListener>()
-				 where ls == mock.Object
+				 where ls == mock
 				 select ts)
 				 .Count());
 
@@ -69,7 +69,7 @@ namespace System.Diagnostics.UnitTests
 				(from ts in source.Sources
 				 where ts.Name == "System.Diagnostics"
 				 from ls in ts.Listeners.OfType<TraceListener>()
-				 where ls == mock.Object
+				 where ls == mock
 				 select ls)
 				 .Count()
 				 );
@@ -78,9 +78,9 @@ namespace System.Diagnostics.UnitTests
 		[Test]
 		public void ShouldAddListenerToNewlyCreated()
 		{
-			var mock = new Mock<TraceListener>();
+			var mock = new TextWriterTraceListener();
 
-			Tracer.AddListener("System.Diagnostics", mock.Object);
+			Tracer.AddListener("System.Diagnostics", mock);
 
 			// Creation happens after adding now.
 			var source = Tracer.GetSourceFor<Foo>();
@@ -90,7 +90,7 @@ namespace System.Diagnostics.UnitTests
 				(from ts in source.Sources
 				 where ts.Name != "System.Diagnostics"
 				 from ls in ts.Listeners.OfType<TraceListener>()
-				 where ls == mock.Object
+				 where ls == mock
 				 select ts)
 				 .Count());
 
@@ -98,7 +98,69 @@ namespace System.Diagnostics.UnitTests
 				(from ts in source.Sources
 				 where ts.Name == "System.Diagnostics"
 				 from ls in ts.Listeners.OfType<TraceListener>()
-				 where ls == mock.Object
+				 where ls == mock
+				 select ls)
+				 .Count()
+				 );
+		}
+
+		[Test]
+		public void ShouldRemoveListenerFromExisting()
+		{
+			var mock = new TextWriterTraceListener();
+
+			Tracer.AddListener("System.Diagnostics", mock);
+
+			// Creation happens after adding now.
+			var source = Tracer.GetSourceFor<Foo>();
+
+			var count = (from ts in source.Sources
+						 where ts.Name == "System.Diagnostics"
+						 from ls in ts.Listeners.OfType<TraceListener>()
+						 where ls == mock
+						 select ls)
+				 .Count();
+
+			// No other sources should have the listener
+			Assert.AreEqual(1,
+				(from ts in source.Sources
+				 where ts.Name == "System.Diagnostics"
+				 from ls in ts.Listeners.OfType<TraceListener>()
+				 where ls == mock
+				 select ls)
+				 .Count()
+				 );
+
+			Tracer.RemoveListener("System.Diagnostics", mock);
+
+			// No one should have the listener
+			Assert.AreEqual(0,
+				(from ts in source.Sources
+				 where ts.Name == "System.Diagnostics"
+				 from ls in ts.Listeners.OfType<TraceListener>()
+				 where ls == mock
+				 select ls)
+				 .Count()
+				 );
+		}
+
+		[Test]
+		public void ShouldRemoveListenerForNewlyCreated()
+		{
+			var mock = new TextWriterTraceListener();
+
+			Tracer.AddListener("System.Diagnostics", mock);
+			Tracer.RemoveListener("System.Diagnostics", mock);
+
+			// Creation happens after adding now.
+			var source = Tracer.GetSourceFor<Foo>();
+
+			// No one should have the listener
+			Assert.AreEqual(0,
+				(from ts in source.Sources
+				 where ts.Name == "System.Diagnostics"
+				 from ls in ts.Listeners.OfType<TraceListener>()
+				 where ls == mock
 				 select ls)
 				 .Count()
 				 );

@@ -2,6 +2,7 @@
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Text;
+using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Description
 {
@@ -69,4 +70,37 @@ namespace System.ServiceModel.Description
 			}
 		}
 	}
+
+	public class ErrorHanderBehavior : WebHttpBehavior
+	{
+		IErrorHandler errorHandler;
+
+		public ErrorHanderBehavior(IErrorHandler errorHandler)
+		{
+			this.errorHandler = errorHandler;
+		}
+
+		protected override void AddServerErrorHandlers(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
+		{
+			endpointDispatcher.ChannelDispatcher.ErrorHandlers.Clear();
+			endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add(errorHandler);
+		}
+	}
 }
+
+namespace System.ServiceModel.Configuration
+{
+	public class ErrorHandlerExtensionElement : BehaviorExtensionElement
+	{
+		public override Type BehaviorType
+		{
+			get { return typeof(ErrorHanderBehavior); }
+		}
+
+		protected override object CreateBehavior()
+		{
+			return new ErrorHanderBehavior(new ErrorHandler());
+		}
+	}
+}
+
