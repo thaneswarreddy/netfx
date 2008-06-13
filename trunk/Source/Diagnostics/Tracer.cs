@@ -34,7 +34,7 @@ namespace System.Diagnostics
 	/// }
 	/// </code>
 	/// </example>
-#if NetFx	
+#if NetFx
 	public interface ITraceSource
 #else
 	internal interface ITraceSource
@@ -122,7 +122,7 @@ namespace System.Diagnostics
 	/// from that point on.
 	/// </para>
 	/// </remarks>
-#if NetFx	
+#if NetFx
 	public static class Tracer
 #else
 	internal static class Tracer
@@ -297,10 +297,10 @@ namespace System.Diagnostics
 		internal static void AddListener(string sourceName, TraceListener listener)
 		{
 			var query = (from keyPair in cachedCompositeSources
-							 where keyPair.Key.FullName.StartsWith(sourceName)
-							 from source in keyPair.Value.Sources
-							 where source.Name == sourceName
-							 select source).ToList();
+						 where keyPair.Key.FullName.StartsWith(sourceName)
+						 from source in keyPair.Value.Sources
+						 where source.Name == sourceName
+						 select source).Distinct().ToList();
 
 			query.ForEach(source => source.Listeners.Add(listener));
 
@@ -319,6 +319,27 @@ namespace System.Diagnostics
 			}
 
 			listeners.Add(listener);
+		}
+
+		internal static void RemoveListener(string sourceName, TraceListener listener)
+		{
+			var query = (from keyPair in cachedCompositeSources
+						 where keyPair.Key.FullName.StartsWith(sourceName)
+						 from source in keyPair.Value.Sources
+						 where source.Name == sourceName
+						 select source).Distinct().ToList();
+
+			query.ForEach(source => source.Listeners.Remove(listener));
+
+			List<TraceListener> listeners;
+
+			lock (additionalListeners)
+			{
+				if (additionalListeners.TryGetValue(sourceName, out listeners))
+				{
+					listeners.Remove(listener);
+				}
+			}
 		}
 
 		internal static void SetLoggingLevel(string sourceName, SourceLevels sourceLevels)

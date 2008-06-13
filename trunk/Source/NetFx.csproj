@@ -72,10 +72,8 @@
     <Compile Include="Guard.cs" />
     <Compile Include="Linq\EnumerableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceModel\Configuration\ErrorHandlerExtensionElement.cs" />
+    <Compile Include="ServiceModel\ErrorHandler.cs" />
     <Compile Include="ServiceModel\Configuration\UsernameCredentialsElement.cs" />
-    <Compile Include="ServiceModel\Description\ErrorHanderBehavior.cs" />
-    <Compile Include="ServiceModel\Description\ErrorHandler.cs" />
     <Compile Include="ServiceModel\DisposableChannel.cs" />
     <Compile Include="ServiceModel\HttpClientCacheAttribute.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
@@ -84,12 +82,7 @@
     <Compile Include="ServiceModel\OperationContextWrapper.cs" />
     <Compile Include="ServiceModel\ServiceSecurityContextWrapper.cs" />
     <Compile Include="ServiceModel\ServiceException.cs" />
-    <Compile Include="ServiceModel\Web\IIncomingWebRequestContext.cs" />
-    <Compile Include="ServiceModel\Web\IncomingWebRequestContextWrapper.cs" />
-    <Compile Include="ServiceModel\Web\IOutgoingWebResponseContext.cs" />
-    <Compile Include="ServiceModel\Web\IWebOperationContext.cs" />
-    <Compile Include="ServiceModel\Web\OutgoingWebResponseContextWrapper.cs" />
-    <Compile Include="ServiceModel\Web\WebOperationContextWrapper.cs" />
+    <Compile Include="ServiceModel\Web\Wrappers.cs" />
     <Compile Include="Web\Mvc\ControllerExtensions.cs" />
     <Compile Include="Xml\XmlWrappingReader.cs" />
     <Compile Include="Xml\XmlWrappingWriter.cs" />

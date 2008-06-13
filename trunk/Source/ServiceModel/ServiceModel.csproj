@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30428</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ECECCF97-761E-43D3-9178-D22BCB5AC37B}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -59,23 +59,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\ErrorHandlerExtensionElement.cs" />
     <Compile Include="Configuration\UsernameCredentialsElement.cs" />
-    <Compile Include="Description\ErrorHanderBehavior.cs" />
-    <Compile Include="Description\ErrorHandler.cs" />
     <Compile Include="DisposableChannel.cs" />
+    <Compile Include="ErrorHandler.cs" />
     <Compile Include="HttpClientCacheAttribute.cs" />
     <Compile Include="IOperationContext.cs" />
     <Compile Include="IServiceSecurityContext.cs" />
     <Compile Include="OperationContextWrapper.cs" />
     <Compile Include="ServiceException.cs" />
     <Compile Include="ServiceSecurityContextWrapper.cs" />
-    <Compile Include="Web\IIncomingWebRequestContext.cs" />
-    <Compile Include="Web\IncomingWebRequestContextWrapper.cs" />
-    <Compile Include="Web\IOutgoingWebResponseContext.cs" />
-    <Compile Include="Web\IWebOperationContext.cs" />
-    <Compile Include="Web\OutgoingWebResponseContextWrapper.cs" />
-    <Compile Include="Web\WebOperationContextWrapper.cs" />
+    <Compile Include="Web\Wrappers.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
