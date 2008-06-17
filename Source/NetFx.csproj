@@ -84,7 +84,7 @@
     <Compile Include="ServiceModel\ServiceException.cs" />
     <Compile Include="ServiceModel\Web\Wrappers.cs" />
     <Compile Include="Web\Mvc\ControllerExtensions.cs" />
-    <Compile Include="Web\Mvc\LocalizationExtensions.cs" />
+    <Compile Include="Web\UriExtensions.cs" />
     <Compile Include="Xml\XmlWrappingReader.cs" />
     <Compile Include="Xml\XmlWrappingWriter.cs" />
   </ItemGroup>
