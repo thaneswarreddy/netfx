@@ -15,5 +15,18 @@ namespace System.Linq
 				action(item);
 			}
 		}
+
+		/// <summary>
+		/// Allows chaining actions on a set of items for later processing, filtering 
+		/// or projection (transformation).
+		/// </summary>
+		public static IEnumerable<T> Act<T>(this IEnumerable<T> source, Action<T> action)
+		{
+			foreach (var item in source)
+			{
+				action(item);
+				yield return item;
+			}
+		}
 	}
 }
