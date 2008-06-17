@@ -73,5 +73,15 @@ namespace NetFx.UnitTests.Web
 			var uri2 = uri.WithoutQueryString();
 			Assert.AreEqual(new Uri("http://host/"), uri2);
 		}
+
+		[Test]
+		public void RemoveSingleOccurrence()
+		{
+			var uri = new Uri("http://host?a=1&b=2&a=3");
+			var uri2 = uri.Remove("a", "1");
+			Assert.IsFalse(uri2.HasValue("a", "1"));
+			Assert.IsTrue(uri2.HasValue("b", "2"));
+			Assert.IsTrue(uri2.HasValue("a", "3"));
+		}
 	}
 }
