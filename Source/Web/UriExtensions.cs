@@ -63,6 +63,26 @@ namespace System.Web
 			return new Uri(uri.WithoutQueryString() + query.ToQueryString(), UriKind.RelativeOrAbsolute);
 		}
 
+		/// <summary>
+		/// Remove QueryString name/value
+		/// </summary>
+		/// <param name="uri"></param>
+		/// <param name="name"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static Uri Remove(this Uri uri, string name, string value)
+		{
+			var query = HttpUtility.ParseQueryString(uri.Query);
+			var oldValues = query.GetValues(name);
+			query.Remove(name);
+			foreach (var v in oldValues)
+			{
+				if (v != value)
+					query.Add(name, v);
+			}
+			return new Uri(uri.WithoutQueryString() + query.ToQueryString(), UriKind.RelativeOrAbsolute);
+		}
+
 		public static Uri WithoutQueryString(this Uri uri)
 		{
 			return new Uri(uri.GetComponents(UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.UriEscaped));
