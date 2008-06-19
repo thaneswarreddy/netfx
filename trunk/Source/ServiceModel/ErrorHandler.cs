@@ -46,8 +46,9 @@ namespace System.ServiceModel.Description
 			{
 				// TODO: to exception shielding
 				// TODO: do logging
-				// TODO: ensure we do special behavior only for ServiceException (check cast)
-				this.Context.OutgoingResponse.StatusCode = ((ServiceException)error).StatusCode;
+				var se = error as ServiceException;
+				if (se != null)
+					this.Context.OutgoingResponse.StatusCode = ((ServiceException)error).StatusCode;
 
 				// Strip invalid chars.
 				var sb = new StringBuilder();
@@ -57,7 +58,7 @@ namespace System.ServiceModel.Description
 					if (((ch <= '\x001f') && (ch != '\t')) || (ch == '\x007f'))
 					{
 						// Specified value has invalid Control characters.
-						// See HttpListenerResponse.StatusDescription
+						// See HttpListenerResponse.StatusDescription implementation.
 					}
 					else
 					{
@@ -71,6 +72,9 @@ namespace System.ServiceModel.Description
 		}
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public class ErrorHanderBehavior : WebHttpBehavior
 	{
 		IErrorHandler errorHandler;

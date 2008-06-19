@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30428</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A3B3F0C9-5ECC-4B8D-BD27-4BEA94277D28}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -23,6 +23,8 @@
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA2210</CodeAnalysisRules>
+    <DocumentationFile>bin\Debug\NetFx.xml</DocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -82,6 +84,7 @@
     <Compile Include="ServiceModel\OperationContextWrapper.cs" />
     <Compile Include="ServiceModel\ServiceSecurityContextWrapper.cs" />
     <Compile Include="ServiceModel\ServiceException.cs" />
+    <Compile Include="ServiceModel\Web\HttpContextIdentityPolicy.cs" />
     <Compile Include="ServiceModel\Web\Wrappers.cs" />
     <Compile Include="Web\Mvc\ControllerExtensions.cs" />
     <Compile Include="Web\UriExtensions.cs" />

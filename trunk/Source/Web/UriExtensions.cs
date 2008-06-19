@@ -24,10 +24,6 @@ namespace System.Web
 		/// <summary>
 		/// Override QueryString value
 		/// </summary>
-		/// <param name="uri"></param>
-		/// <param name="name"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
 		public static Uri Override(this Uri uri, string name, string value)
 		{
 			var query = HttpUtility.ParseQueryString(uri.Query);
@@ -38,10 +34,6 @@ namespace System.Web
 		/// <summary>
 		/// Append QueryString value
 		/// </summary>
-		/// <param name="uri"></param>
-		/// <param name="name"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
 		public static Uri Append(this Uri uri, string name, string value)
 		{
 			var query = HttpUtility.ParseQueryString(uri.Query);
@@ -52,10 +44,6 @@ namespace System.Web
 		/// <summary>
 		/// Remove QueryString value
 		/// </summary>
-		/// <param name="uri"></param>
-		/// <param name="name"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
 		public static Uri Remove(this Uri uri, string name)
 		{
 			var query = HttpUtility.ParseQueryString(uri.Query);
@@ -66,10 +54,6 @@ namespace System.Web
 		/// <summary>
 		/// Remove QueryString name/value
 		/// </summary>
-		/// <param name="uri"></param>
-		/// <param name="name"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
 		public static Uri Remove(this Uri uri, string name, string value)
 		{
 			var query = HttpUtility.ParseQueryString(uri.Query);
@@ -83,11 +67,17 @@ namespace System.Web
 			return new Uri(uri.WithoutQueryString() + query.ToQueryString(), UriKind.RelativeOrAbsolute);
 		}
 
+		/// <summary>
+		/// Gets a new uri without the query string arguments in the original one.
+		/// </summary>
 		public static Uri WithoutQueryString(this Uri uri)
 		{
 			return new Uri(uri.GetComponents(UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.UriEscaped));
 		}
 
+		/// <summary>
+		/// Builds a query string formatted value from the collection.
+		/// </summary>
 		public static string ToQueryString(this NameValueCollection dictionary)
 		{
 			var builder = new StringBuilder();

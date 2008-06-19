@@ -2,9 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IdentityModel.Policy;
+using System.Collections.ObjectModel;
+using System.Security.Principal;
 
 namespace System.ServiceModel
 {
+	/// <summary>
+	/// Provides an implementation of <see cref="IServiceSecurityContext"/> that 
+	/// wraps the underlying runtime <see cref="ServiceSecurityContext"/>.
+	/// </summary>
 	public class ServiceSecurityContextWrapper : IServiceSecurityContext
 	{
 		ServiceSecurityContext context;
@@ -14,9 +21,7 @@ namespace System.ServiceModel
 			this.context = context;
 		}
 
-		#region IServiceSecurityContext Members
-
-		public System.IdentityModel.Policy.AuthorizationContext AuthorizationContext
+		AuthorizationContext IServiceSecurityContext.AuthorizationContext
 		{
 			get
 			{
@@ -24,7 +29,7 @@ namespace System.ServiceModel
 			}
 		}
 
-		public System.Collections.ObjectModel.ReadOnlyCollection<System.IdentityModel.Policy.IAuthorizationPolicy> AuthorizationPolicies
+		 ReadOnlyCollection<IAuthorizationPolicy> IServiceSecurityContext.AuthorizationPolicies
 		{
 			get
 			{
@@ -32,7 +37,7 @@ namespace System.ServiceModel
 			}
 		}
 
-		public bool IsAnonymous
+		 bool IServiceSecurityContext.IsAnonymous
 		{
 			get
 			{
@@ -40,7 +45,7 @@ namespace System.ServiceModel
 			}
 		}
 
-		public System.Security.Principal.IIdentity PrimaryIdentity
+		 IIdentity IServiceSecurityContext.PrimaryIdentity
 		{
 			get
 			{
@@ -48,14 +53,12 @@ namespace System.ServiceModel
 			}
 		}
 
-		public System.Security.Principal.WindowsIdentity WindowsIdentity
+		 WindowsIdentity IServiceSecurityContext.WindowsIdentity
 		{
 			get
 			{
 				return this.context.WindowsIdentity;
 			}
 		}
-
-		#endregion
 	}
 }
