@@ -68,6 +68,7 @@
     <Compile Include="OperationContextWrapper.cs" />
     <Compile Include="ServiceException.cs" />
     <Compile Include="ServiceSecurityContextWrapper.cs" />
+    <Compile Include="Web\HttpContextIdentityPolicy.cs" />
     <Compile Include="Web\Wrappers.cs" />
   </ItemGroup>
   <ItemGroup>
