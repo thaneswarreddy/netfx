@@ -11,7 +11,11 @@ namespace System.Reflection
 	/// type.
 	/// </summary>
 	/// <typeparam name="TTarget">Type to reflect.</typeparam>
+#if NetFx
 	public static class Reflect<TTarget>
+#else
+	internal static class Reflect<TTarget>
+#endif
 	{
 		/// <summary>
 		/// Gets the method represented by the lambda expression.
