@@ -43,6 +43,9 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.IdentityModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.ServiceModel">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -70,6 +73,7 @@
     <Compile Include="ServiceModel\HttpClientCacheBehaviorFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Diagnostics\TracerFixture.cs" />
+    <Compile Include="Web\HttpContextIdentityPolicyFixture.cs" />
     <Compile Include="Web\Mvc\ControllerExtensionsFixture.cs" />
     <Compile Include="Web\UriExtensionsFixture.cs" />
   </ItemGroup>

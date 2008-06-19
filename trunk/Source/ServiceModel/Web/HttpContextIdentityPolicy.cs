@@ -52,15 +52,24 @@ namespace System.ServiceModel.Web
 
 				evaluationContext.Properties["Principal"] = principal;
 
-				// add a claim set containing the client name
-				ClaimSet set = new DefaultClaimSet(
-						Claim.CreateNameClaim(this.principal.Identity.Name), 
+				var nameClaim = Claim.CreateNameClaim(this.principal.Identity.Name);
+				ClaimSet set;
+
+				if (HttpContext.Current != null)
+				{
+					set = new DefaultClaimSet(
+						nameClaim, 
 						new Claim(
 							ClaimTypes.Authentication,
 							HttpContext.Current.User.Identity,
 							Rights.Identity)
-				);					
-				
+					);
+				}
+				else
+				{
+					set = new DefaultClaimSet(nameClaim);
+				}
+
 				evaluationContext.AddClaimSet(this, set);
 			}
 
