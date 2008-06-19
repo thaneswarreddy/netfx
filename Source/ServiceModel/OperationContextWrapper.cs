@@ -2,9 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Security;
 
 namespace System.ServiceModel
 {
+	/// <summary>
+	/// Provides an implementation of <see cref="IOperationContext"/> that 
+	/// wraps the underlying runtime <see cref="OperationContext"/>.
+	/// </summary>
 	public class OperationContextWrapper : IOperationContext
 	{
 		OperationContext context;
@@ -14,76 +20,74 @@ namespace System.ServiceModel
 			this.context = context;
 		}
 
-		#region IOperationContext Members
-
 		public event EventHandler OperationCompleted;
 
-		public T GetCallbackChannel<T>()
+		 T IOperationContext.GetCallbackChannel<T>()
 		{
 			return context.GetCallbackChannel<T>();
 		}
 
-		public void SetTransactionComplete()
+		 void IOperationContext.SetTransactionComplete()
 		{
 			context.SetTransactionComplete();
 		}
 
-		public IContextChannel Channel
+		 IContextChannel IOperationContext.Channel
 		{
 			get { return context.Channel; }
 		}
 
-		public IExtensionCollection<OperationContext> Extensions
+		 IExtensionCollection<OperationContext> IOperationContext.Extensions
 		{
 			get { return context.Extensions; }
 		}
 
-		public bool HasSupportingTokens
+		 bool IOperationContext.HasSupportingTokens
 		{
 			get { return context.HasSupportingTokens; }
 		}
 
-		public ServiceHostBase Host
+		 ServiceHostBase IOperationContext.Host
 		{
 			get { return context.Host; }
 		}
 
-		public System.ServiceModel.Channels.MessageHeaders IncomingMessageHeaders
+		 MessageHeaders IOperationContext.IncomingMessageHeaders
 		{
 			get { return context.IncomingMessageHeaders; }
 		}
 
-		public System.ServiceModel.Channels.MessageProperties IncomingMessageProperties
+		 MessageProperties IOperationContext.IncomingMessageProperties
 		{
 			get { return context.IncomingMessageProperties; }
 		}
 
-		public System.ServiceModel.Channels.MessageVersion IncomingMessageVersion
+		 MessageVersion IOperationContext.IncomingMessageVersion
 		{
 			get { return context.IncomingMessageVersion; }
 		}
 
-		public InstanceContext InstanceContext
+		 InstanceContext IOperationContext.InstanceContext
 		{
 			get { return context.InstanceContext; }
 		}
 
-		public bool IsUserContext
+		 bool IOperationContext.IsUserContext
 		{
 			get { return context.IsUserContext; }
 		}
 
-		public System.ServiceModel.Channels.MessageHeaders OutgoingMessageHeaders
+		 MessageHeaders IOperationContext.OutgoingMessageHeaders
 		{
 			get { return context.OutgoingMessageHeaders; }
 		}
 
-		public System.ServiceModel.Channels.MessageProperties OutgoingMessageProperties
+		 MessageProperties IOperationContext.OutgoingMessageProperties
 		{
 			get { return context.OutgoingMessageProperties; }
 		}
 
-		public System.ServiceModel.Channels.RequestContext RequestContext
+		 RequestContext IOperationContext.RequestContext
 		{
 			get
 			{
@@ -95,21 +99,19 @@ namespace System.ServiceModel
 			}
 		}
 
-		public IServiceSecurityContext ServiceSecurityContext
+		 IServiceSecurityContext IOperationContext.ServiceSecurityContext
 		{
 			get { return new ServiceSecurityContextWrapper(context.ServiceSecurityContext); }
 		}
 
-		public string SessionId
+		 string IOperationContext.SessionId
 		{
 			get { return context.SessionId; }
 		}
 
-		public ICollection<System.ServiceModel.Security.SupportingTokenSpecification> SupportingTokens
+		 ICollection<SupportingTokenSpecification> IOperationContext.SupportingTokens
 		{
 			get { return context.SupportingTokens; }
 		}
-
-		#endregion
 	}
 }
