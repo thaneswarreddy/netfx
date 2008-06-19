@@ -22,9 +22,10 @@ namespace System.ServiceModel.Web
 	/// The following example shows the <c>authorizationPolicies</c> configuration element:
 	/// <code>
 	/// &lt;authorizationPolicies&gt;
-	/// &lt;add policyType="Instedd.GeoChat.HttpContextIdentityPolicy, Instedd.GeoChat.Server" /&gt;
+	/// &lt;add policyType="System.ServiceModel.Web.HttpContextIdentityPolicy, NetFx" /&gt;
 	/// &lt;/authorizationPolicies&gt;
 	/// </code>
+	/// Replace NetFx with your assembly name if you're linking to this file instead.
 	/// </example>
 	public class HttpContextIdentityPolicy : IAuthorizationPolicy
 	{
