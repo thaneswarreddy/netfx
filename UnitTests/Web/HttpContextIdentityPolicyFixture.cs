@@ -8,6 +8,7 @@ using System.IdentityModel.Policy;
 using System.Security.Principal;
 using System.IdentityModel.Claims;
 using System.ServiceModel.Web;
+using System.Web;
 
 namespace NetFx.UnitTests.Web
 {
@@ -25,16 +26,21 @@ namespace NetFx.UnitTests.Web
 				.ExpectGet(ec => ec.Properties)
 				.Returns(properties);
 
-			var identity = new GenericPrincipal(new GenericIdentity("foo"), null);
+			var principal = new GenericPrincipal(new GenericIdentity("foo"), null);
+			var httpContext = new HttpContext(
+				new HttpRequest("foo", "http://foo", ""),
+				new HttpResponse(Console.Out));
+			HttpContext.Current = httpContext;
+			httpContext.User = principal;
 
 			object state = null;
-			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy(identity);
+			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy();
 
 			policy.Evaluate(evaluationContextMock.Object, ref state);
 
 			Assert.IsTrue(properties.ContainsKey("Identities"));
 			Assert.IsTrue(properties["Identities"] is List<IIdentity>);
-			Assert.AreEqual(identity.Identity, ((List<IIdentity>)properties["Identities"])[0]);
+			Assert.AreSame(principal.Identity, ((List<IIdentity>)properties["Identities"])[0]);
 		}
 
 		[Test]
@@ -48,25 +54,35 @@ namespace NetFx.UnitTests.Web
 				.ExpectGet(ec => ec.Properties)
 				.Returns(properties);
 
-			var identity = new GenericPrincipal(new GenericIdentity("foo"), null);
+			var principal = new GenericPrincipal(new GenericIdentity("foo"), null);
+			var httpContext = new HttpContext(
+				new HttpRequest("foo", "http://foo", ""),
+				new HttpResponse(Console.Out));
+			HttpContext.Current = httpContext;
+			httpContext.User = principal;
 
 			object state = null;
-			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy(identity);
+			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy();
 
 			policy.Evaluate(evaluationContextMock.Object, ref state);
 
 			Assert.IsTrue(properties.ContainsKey("Principal"));
 			Assert.IsTrue(properties["Principal"] is IPrincipal);
-			Assert.AreEqual(identity, (IPrincipal)properties["Principal"]);
+			Assert.AreSame(principal, (IPrincipal)properties["Principal"]);
 		}
 
 		[Test]
 		public void ShouldAddClaimSet()
 		{
-			var identity = new GenericPrincipal(new GenericIdentity("foo"), null);
+			var principal = new GenericPrincipal(new GenericIdentity("foo"), null);
+			var httpContext = new HttpContext(
+				new HttpRequest("foo", "http://foo", ""),
+				new HttpResponse(Console.Out));
+			HttpContext.Current = httpContext;
+			httpContext.User = principal;
 
 			object state = null;
-			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy(identity);
+			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy();
 
 			var evaluationContextMock = new Mock<EvaluationContext>();
 
@@ -84,16 +100,71 @@ namespace NetFx.UnitTests.Web
 		}
 
 		[Test]
-		public void ShouldNotFailForNullIdentity()
+		public void ShouldNotFailForNullHttpContext()
 		{
 			var evaluationContextMock = new Mock<EvaluationContext>();
+			HttpContext.Current = null;
 
 			object state = null;
-			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy(null);
+			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy();
 
 			bool result = policy.Evaluate(evaluationContextMock.Object, ref state);
 
 			Assert.IsTrue(result);
+		}
+
+		[Test]
+		public void ShouldNotFailForNullHttpContextUser()
+		{
+			var evaluationContextMock = new Mock<EvaluationContext>();
+			var httpContext = new HttpContext(
+				new HttpRequest("foo", "http://foo", ""),
+				new HttpResponse(Console.Out));
+			HttpContext.Current = httpContext;
+
+			object state = null;
+			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy();
+
+			bool result = policy.Evaluate(evaluationContextMock.Object, ref state);
+
+			Assert.IsTrue(result);
+		}
+
+		[Test]
+		public void ShouldSetClaimForCurrentUserWithoutCachingIt()
+		{
+			var evaluationContextMock = new Mock<EvaluationContext>();
+			var principal = new GenericPrincipal(new GenericIdentity("foo"), null);
+			var httpContext = new HttpContext(
+				new HttpRequest("foo", "http://foo", ""), 
+				new HttpResponse(Console.Out));
+			HttpContext.Current = httpContext;
+			httpContext.User = principal;
+
+			var properties = new Dictionary<string, object>();
+
+			evaluationContextMock
+				.ExpectGet(ec => ec.Properties)
+				.Returns(properties);
+
+			object state = null;
+			HttpContextIdentityPolicy policy = new HttpContextIdentityPolicy();
+
+			policy.Evaluate(evaluationContextMock.Object, ref state);
+
+			Assert.IsTrue(properties.ContainsKey("Principal"));
+			Assert.IsTrue(properties["Principal"] is IPrincipal);
+			Assert.AreSame(principal, (IPrincipal)properties["Principal"]);
+
+			// Change the current principal
+			principal = new GenericPrincipal(new GenericIdentity("bar"), null);
+			httpContext.User = principal;
+
+			policy.Evaluate(evaluationContextMock.Object, ref state);
+
+			Assert.IsTrue(properties.ContainsKey("Principal"));
+			Assert.IsTrue(properties["Principal"] is IPrincipal);
+			Assert.AreSame(principal, (IPrincipal)properties["Principal"]);
 		}
 	}
 }

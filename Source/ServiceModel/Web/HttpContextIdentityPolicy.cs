@@ -29,30 +29,25 @@ namespace System.ServiceModel.Web
 	/// </example>
 	public class HttpContextIdentityPolicy : IAuthorizationPolicy
 	{
-		IPrincipal principal;
-
 		public HttpContextIdentityPolicy()
 		{
-			if (HttpContext.Current != null)
-				this.principal = HttpContext.Current.User;
-		}
-
-		public HttpContextIdentityPolicy(IPrincipal principal)
-		{
-			this.principal = principal;
 		}
 
 		public bool Evaluate(EvaluationContext evaluationContext, ref object state)
 		{
-			if (this.principal != null)
+			IPrincipal principal = null;
+			if (HttpContext.Current != null)
+				principal = HttpContext.Current.User;
+
+			if (principal != null)
 			{
 				// set the identity (for PrimaryIdentity)
 				evaluationContext.Properties["Identities"] =
-					new List<IIdentity>() { this.principal.Identity };
+					new List<IIdentity>() { principal.Identity };
 
 				evaluationContext.Properties["Principal"] = principal;
 
-				var nameClaim = Claim.CreateNameClaim(this.principal.Identity.Name);
+				var nameClaim = Claim.CreateNameClaim(principal.Identity.Name);
 				ClaimSet set;
 
 				if (HttpContext.Current != null)
