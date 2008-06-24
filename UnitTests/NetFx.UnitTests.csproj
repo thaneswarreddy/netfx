@@ -75,6 +75,7 @@
     <Compile Include="Diagnostics\TracerFixture.cs" />
     <Compile Include="Web\HttpContextIdentityPolicyFixture.cs" />
     <Compile Include="Web\Mvc\ControllerExtensionsFixture.cs" />
+    <Compile Include="Web\Mvc\UrlHelperExtensionsFixture.cs" />
     <Compile Include="Web\UriExtensionsFixture.cs" />
   </ItemGroup>
   <ItemGroup>
