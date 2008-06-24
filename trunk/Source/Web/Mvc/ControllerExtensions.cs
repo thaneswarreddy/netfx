@@ -3,6 +3,7 @@
  *		System.Web.Abstractions
  *		System.Web.Mvc
  *		System.Web.Routing
+ *		ControllerExpressions.cs
  *		
  * Authors: Daniel Cazzulino - daniel@cazzulino.com
  */
@@ -25,6 +26,7 @@ namespace System.Web.Mvc
 		/// <param name="controller">The controller performing the redirect.</param>
 		/// <param name="action">The action containing the redirect.</param>
 		public static void RedirectToAction<T>(this Controller controller, Expression<Action<T>> action)
+			where T : Controller
 		{
 			string target = controller.ActionUrl<T>(action);
 			controller.HttpContext.Response.Redirect(target);
@@ -39,30 +41,18 @@ namespace System.Web.Mvc
 		/// <param name="controller">The controller performing the call.</param>
 		/// <param name="action">The action containing the call.</param>
 		public static string ActionUrl<T>(this Controller controller, Expression<Action<T>> action)
+			where T : Controller
 		{
-			MethodCallExpression call = action.Body as MethodCallExpression;
-			if (call == null)
-			{
-				throw new InvalidOperationException("Expression must be a method call");
-			}
-			if (call.Object != action.Parameters[0])
-			{
-				throw new InvalidOperationException("Method call must target lambda argument");
-			}
+			var call = ControllerExpression.GetMethodCall<T>(action);
 
 			string actionName = call.Method.Name;
-			// TODO: Use better logic to chop off the controller suffix
-			string controllerName = typeof(T).Name;
-			if (controllerName.EndsWith("Controller", StringComparison.OrdinalIgnoreCase))
-			{
-				controllerName = controllerName.Remove(controllerName.Length - 10, 10);
-			}
+			string controllerName = ControllerExpression.GetControllerName<T>();
 
 			var values = LinkBuilder.BuildParameterValuesFromExpression(call);
 			values.Add("action", actionName);
 			values.Add("controller", controllerName);
 
-			VirtualPathData vpd = RouteTable.Routes.GetVirtualPath(controller.ControllerContext, values);
+			var vpd = RouteTable.Routes.GetVirtualPath(controller.ControllerContext, values);
 			string target = null;
 			if (vpd != null)
 			{
@@ -81,6 +71,7 @@ namespace System.Web.Mvc
 		/// <param name="controller">The controller performing the call.</param>
 		/// <param name="action">The action containing the call.</param>
 		public static string FullActionUrl<T>(this Controller controller, Expression<Action<T>> action)
+			where T : Controller
 		{
 			string host = controller.HttpContext.Request.Url.Authority;
 			string schema = controller.HttpContext.Request.Url.Scheme;
