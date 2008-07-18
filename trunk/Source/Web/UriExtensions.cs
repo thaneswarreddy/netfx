@@ -22,6 +22,18 @@ namespace System.Web
 		}
 
 		/// <summary>
+		/// Indicates whether the uri has or not a query string parameter
+		/// </summary>
+		/// <param name="uri"></param>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public static bool HasParam(this Uri uri, string name)
+		{
+			var query = HttpUtility.ParseQueryString(uri.Query);
+			return query.AllKeys.Contains(name);
+		}
+
+		/// <summary>
 		/// Override QueryString value
 		/// </summary>
 		public static Uri Override(this Uri uri, string name, string value)
