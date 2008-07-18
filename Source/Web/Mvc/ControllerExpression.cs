@@ -15,7 +15,7 @@ using System.Linq.Expressions;
 
 namespace System.Web.Mvc
 {
-	static class ControllerExpression
+	public static class ControllerExpression
 	{
 		public static MethodCallExpression GetMethodCall<T>(Expression<Action<T>> action) where T : Controller
 		{
