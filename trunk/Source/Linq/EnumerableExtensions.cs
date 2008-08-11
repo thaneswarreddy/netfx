@@ -27,12 +27,24 @@ namespace System.Linq
 		/// Allows chaining actions on a set of items for later processing, filtering 
 		/// or projection (transformation).
 		/// </summary>
-		public static IEnumerable<T> Act<T>(this IEnumerable<T> source, Action<T> action)
+		/// <returns>An enumeration with the same items as the source.</returns>
+		public static IEnumerable<T> Do<T>(this IEnumerable<T> source, Action<T> action)
 		{
 			foreach (var item in source)
 			{
 				action(item);
 				yield return item;
+			}
+		}
+
+		/// <summary>
+		/// Enumerates all elements in the source, so that any intermediate 
+		/// action or side-effect from it is performed eagerly.
+		/// </summary>
+		public static void EnumerateAll<T>(this IEnumerable<T> source)
+		{
+			foreach (var item in source)
+			{
 			}
 		}
 	}
