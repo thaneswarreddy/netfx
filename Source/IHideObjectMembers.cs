@@ -9,11 +9,7 @@ namespace System
 	/// in Visual Studio intellisense.
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
-#if NetFx
 	public interface IHideObjectMembers
-#else
-	internal interface IHideObjectMembers
-#endif
 	{
 		/// <summary/>
 		[EditorBrowsable(EditorBrowsableState.Never)]
