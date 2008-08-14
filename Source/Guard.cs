@@ -1,10 +1,17 @@
+/* Use NET20 compilation symbol to get the non-lambda version of the API. 
+ * 
+*/
+
 using System;
 using System.Globalization;
-using System.Linq.Expressions;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+
+#if !NET20
+using System.Linq.Expressions;
+#endif
 
 namespace System
 {
@@ -14,6 +21,7 @@ namespace System
 	internal static class Guard
 #endif
 	{
+#if !NET20
 		/// <summary>
 		/// Ensures that the given expression results in a non-null value.
 		/// </summary>
@@ -76,13 +84,16 @@ namespace System
 					argName);
 			}
 		}
+#endif
 
 		/// <summary>
 		/// Checks an argument to ensure it isn't null.
 		/// </summary>
 		/// <param name="value">The argument value to check.</param>
 		/// <param name="argumentName">The name of the argument.</param>
-		[Obsolete("Use Guard.NotNull(expression) instead.", false)]
+#if !NET20
+				[Obsolete("Use Guard.NotNull(expression) instead.", false)]
+#endif
 		public static void ArgumentNotNull(object value, string argumentName)
 		{
 			if (value == null)
@@ -94,7 +105,9 @@ namespace System
 		/// </summary>
 		/// <param name="argumentValue">The argument value to check.</param>
 		/// <param name="argumentName">The name of the argument.</param>
-		[Obsolete("Use Guard.NotNullOrEmpty(expression) instead.", false)]
+#if !NET20
+		[Obsolete("Use Guard.NotNull(expression) instead.", false)]
+#endif
 		public static void ArgumentNotNullOrEmptyString(string value, string argumentName)
 		{
 			ArgumentNotNull(value, argumentName);
@@ -121,6 +134,7 @@ namespace System
 			}
 		}
 
+#if !NET20
 		#region ExpressionVisitor
 
 		/// <summary>
@@ -702,5 +716,6 @@ namespace System
 		}
 
 		#endregion
+#endif
 	}
 }
