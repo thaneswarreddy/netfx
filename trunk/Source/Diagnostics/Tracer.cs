@@ -82,6 +82,14 @@ namespace System.Diagnostics
 		/// </summary>
 		void TraceInformation(string format, params object[] args);
 		/// <summary>
+		/// Issues a <see cref="TraceEvent"/> with a <see cref="TraceEventType.Verbose"/> type.
+		/// </summary>
+		void TraceVerbose(string message);
+		/// <summary>
+		/// Issues a <see cref="TraceEvent"/> with a <see cref="TraceEventType.Verbose"/> type.
+		/// </summary>
+		void TraceVerbose(string format, params object[] args);
+		/// <summary>
 		/// See <see cref="TraceSource.TraceTransfer(int, string, Guid)"/>.
 		/// </summary>
 		void TraceTransfer(int id, string message, Guid relatedActivityId);
@@ -401,6 +409,16 @@ namespace System.Diagnostics
 			public void TraceInformation(string format, params object[] args)
 			{
 				sources.ForEach(source => source.TraceInformation(format, args));
+			}
+
+			public void TraceVerbose(string message)
+			{
+				sources.ForEach(source => source.TraceEvent(TraceEventType.Verbose, 0, message));
+			}
+
+			public void TraceVerbose(string format, params object[] args)
+			{
+				sources.ForEach(source => source.TraceEvent(TraceEventType.Verbose, 0, format, args));
 			}
 
 			public void TraceTransfer(int id, string message, Guid relatedActivityId)
