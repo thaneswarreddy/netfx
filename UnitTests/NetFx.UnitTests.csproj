@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\Generic\CovariantExtensionsFixture.cs" />
     <Compile Include="GuardFixture.cs" />
     <Compile Include="Collections\Generic\EnumerableExtensionsFixture.cs" />
     <Compile Include="Reflection\ReflectorFixture.cs" />
