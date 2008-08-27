@@ -8,7 +8,11 @@ namespace System.Collections.Generic
 	/// <summary>
 	/// Provides extensions to implement covariance of generic types.
 	/// </summary>
+#if NetFx	
 	public static class CovariantExtensions
+#else
+	internal static class CovariantExtensions
+#endif
 	{
 		/// <summary>
 		/// Allows for covariance of generic ICollections. Adapts a collection of type
