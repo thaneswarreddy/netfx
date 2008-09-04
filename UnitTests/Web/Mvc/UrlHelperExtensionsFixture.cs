@@ -24,10 +24,9 @@ namespace NetFx.UnitTests.Web.Mvc
 						new Mock<IRouteHandler>().Object),
 					new Mock<IRouteHandler>().Object), 
 				new FooController(), 
-				"Foo", 
-				"Bar", 
-				null, 
-				new TempDataDictionary(http.Object));
+				"Foo",
+				new ViewDataDictionary(), 
+				new TempDataDictionary());
 
 			var helper = new UrlHelper(context);
 
