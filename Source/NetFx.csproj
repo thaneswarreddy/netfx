@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\Generic\CovariantExtensions.cs" />
+    <Compile Include="Collections\Generic\SerializableDictionary.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="IHideObjectMembers.cs" />
     <Compile Include="Collections\Generic\EnumerableExtensions.cs" />
