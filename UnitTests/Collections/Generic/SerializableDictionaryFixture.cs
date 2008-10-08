@@ -145,6 +145,54 @@ namespace NetFx.UnitTests.Collections.Generic
 			Assert.AreEqual(true, dictionary["foo"]);
 		}
 
+		[Test]
+		public void ShouldOverrideElementAndNamespace()
+		{
+			var root = new Root
+			{
+				Extensions =
+				{
+					{ "foo", 25 },
+					{ "bar", true },
+				}
+			};
+
+			var serializer = new XmlSerializer(typeof(Root));
+			var mem = new MemoryStream();
+
+			using (var writer = XmlWriter.Create(Console.Out, new XmlWriterSettings { Indent = true }))
+			{
+				serializer.Serialize(writer, root);
+			}
+
+			using (var writer = XmlWriter.Create(mem, new XmlWriterSettings { Indent = true }))
+			{
+				serializer.Serialize(writer, root);
+			}
+
+			mem.Position = 0;
+			var doc = new XmlDocument();
+			doc.Load(mem);
+
+			var mgr = new XmlNamespaceManager(doc.NameTable);
+			mgr.AddNamespace("m", "xml-mvp");
+
+			Assert.AreEqual(2, doc.SelectNodes("/m:root/m:extensions/m:entry/m:key", mgr).Count);
+			Assert.AreEqual(2, doc.SelectNodes("/m:root/m:extensions/m:entry/m:value", mgr).Count);
+		}
+
+		[XmlRoot("root", Namespace = "xml-mvp")]
+		public class Root
+		{
+			public Root()
+			{
+				Extensions = new SerializableDictionary<string, object>() { XmlNamespaceURI = "xml-mvp" };
+			}
+
+			[XmlElement("extensions", Namespace="xml-mvp")]
+			public SerializableDictionary<string, object> Extensions { get; set; }
+		}
+
 		public class Foo
 		{
 			public string Name { get; set; }
