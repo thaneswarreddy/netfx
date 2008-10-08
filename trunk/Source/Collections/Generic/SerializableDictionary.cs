@@ -145,13 +145,13 @@ namespace System.Collections.Generic
 				// Serialize Key
 				var keyType = item.Key.GetType();
 				var keyWriter = keyType == tKey ? writer : new TypeWriter(writer, keyType);
-				var keySerializer = serializerFactory.CreateSerializer(keyType, new XmlRootAttribute("key"));
+				var keySerializer = serializerFactory.CreateSerializer(keyType, new XmlRootAttribute("key") { Namespace = XmlNamespaceURI });
 				keySerializer.Serialize(keyWriter, item.Key, serializerNamespaces);
 
 				// Serialize Value
 				var valueType = item.Value != null ? item.Value.GetType() : tValue;
 				var valueWriter = valueType == tValue ? writer : new TypeWriter(writer, valueType);
-				var valueSerializer = serializerFactory.CreateSerializer(valueType, new XmlRootAttribute("value"));
+				var valueSerializer = serializerFactory.CreateSerializer(valueType, new XmlRootAttribute("value") { Namespace = XmlNamespaceURI });
 				valueSerializer.Serialize(valueWriter, item.Value, serializerNamespaces);
 
 				writer.WriteEndElement();
