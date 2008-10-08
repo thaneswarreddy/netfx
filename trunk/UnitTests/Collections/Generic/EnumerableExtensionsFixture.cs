@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NetFx.UnitTests.Linq
+namespace NetFx.UnitTests.Collections.Generic
 {
 	[TestFixture]
 	public class EnumerableExtensionsFixture
