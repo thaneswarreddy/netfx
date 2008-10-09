@@ -149,7 +149,7 @@ namespace System.Collections.Generic
 							}
 						}
 					}
-				} while (reader.Read() && reader.Depth >= depth);
+				} while (reader.Read() && reader.MoveToContent() == XmlNodeType.Element && reader.Depth >= depth);
 			}
 		}
 
