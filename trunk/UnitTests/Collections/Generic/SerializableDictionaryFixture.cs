@@ -48,7 +48,7 @@ namespace NetFx.UnitTests.Collections.Generic
 			Assert.AreEqual(true, dictionary["foo"]);
 			Assert.AreEqual("foo", dictionary[25]);
 		}
-		
+
 		[Test]
 		public void ShouldRoundtripXml()
 		{
@@ -60,7 +60,7 @@ namespace NetFx.UnitTests.Collections.Generic
 				Bar = new Bar
 				{
 					Value = "value",
-				}, 
+				},
 			});
 
 			var serializer = new XmlSerializer(dictionary.GetType());
@@ -91,9 +91,9 @@ namespace NetFx.UnitTests.Collections.Generic
 
 			var serializer = new XmlSerializer(type, new XmlRootAttribute("key"));
 
-			using (var writer = XmlWriter.Create(Console.Out, new XmlWriterSettings { Indent = true}))
+			using (var writer = XmlWriter.Create(Console.Out, new XmlWriterSettings { Indent = true }))
 			{
-				serializer.Serialize(writer, 25);				
+				serializer.Serialize(writer, 25);
 			}
 
 			var foo = serializer.Deserialize(reader);
@@ -181,15 +181,36 @@ namespace NetFx.UnitTests.Collections.Generic
 			Assert.AreEqual(2, doc.SelectNodes("/m:root/m:extensions/m:entry/m:value", mgr).Count);
 		}
 
+		[Test]
+		public void ShouldOverrideElementAndNamespaceForDeserialization()
+		{
+			var xml = @"<extensions xmlns='foo-xml'>
+    <entry>
+      <key>foo</key>
+      <value type='System.Int32'>25</value>
+    </entry>
+    <entry>
+      <key>bar</key>
+      <value type='System.Boolean'>true</value>
+    </entry>
+  </extensions>";
+
+			var serializer = new XmlSerializer(typeof(SerializableDictionary<string, object>), new XmlRootAttribute("extensions") { Namespace = "foo-xml" });
+			var dictionary = (SerializableDictionary<string, object>)serializer.Deserialize(new StringReader(xml));
+
+			Assert.AreEqual(2, dictionary.Count);
+		}
+
 		[XmlRoot("root", Namespace = "xml-mvp")]
 		public class Root
 		{
 			public Root()
 			{
-				Extensions = new SerializableDictionary<string, object>() { XmlNamespaceURI = "xml-mvp" };
+				Extensions = new SerializableDictionary<string, object>();
+				Extensions.XmlRoot.Namespace = "xml-mvp";
 			}
 
-			[XmlElement("extensions", Namespace="xml-mvp")]
+			[XmlElement("extensions", Namespace = "xml-mvp")]
 			public SerializableDictionary<string, object> Extensions { get; set; }
 		}
 

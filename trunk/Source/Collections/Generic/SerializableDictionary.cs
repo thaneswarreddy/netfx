@@ -42,18 +42,18 @@ namespace System.Collections.Generic
 
 		/// <summary>
 		/// Initializes an instance of the dictionary, setting the 
-		/// <see cref="XmlNamespaceURI"/> to an empty string.
+		/// <see cref="XmlRoot"/> namespace to an empty string.
 		/// </summary>
 		public SerializableDictionary()
 		{
-			XmlNamespaceURI = "";
+			XmlRoot = new XmlRootAttribute("dictionary") { Namespace = "" };
 		}
 
 		/// <summary>
 		/// Allows overriding of the xml namespace used to serialize 
 		/// child elements.
 		/// </summary>
-		public string XmlNamespaceURI { get; set; }
+		public XmlRootAttribute XmlRoot { get; set; }
 
 		/// <summary>
 		/// Tests whether an extensions dictionary can be read from the current
@@ -65,27 +65,45 @@ namespace System.Collections.Generic
 		/// </remarks>
 		public static bool CanRead(XmlReader reader)
 		{
+			return CanRead(reader, new XmlRootAttribute("dictionary"));
+		}
+
+		/// <summary>
+		/// Tests whether an extensions dictionary can be read from the current
+		/// <see cref="XmlReader"/> position using the given root element information.
+		/// </summary>
+		/// <remarks>
+		/// If the reader is in the <see cref="ReadState.Initial"/>, it's advanced 
+		/// to the content for the check.
+		/// </remarks>
+		public static bool CanRead(XmlReader reader, XmlRootAttribute xmlRoot)
+		{
 			if (reader.ReadState == ReadState.Initial)
 				reader.MoveToContent();
 
 			return reader.NodeType == XmlNodeType.Element &&
-				reader.LocalName == "dictionary" &&
-				reader.NamespaceURI == "";
+				reader.LocalName == xmlRoot.ElementName &&
+				reader.NamespaceURI == xmlRoot.Namespace;
 		}
 
+		/// <summary>
+		/// Reads the dictionary using the default root element name and namespace.
+		/// </summary>
 		public static SerializableDictionary<TKey, TValue> ReadXml(XmlReader reader)
 		{
-			if (!CanRead(reader))
+			return ReadXml(reader, new XmlRootAttribute("dictionary"));
+		}
+
+		/// <summary>
+		/// Reads the dictionary using the given root element override.
+		/// </summary>
+		public static SerializableDictionary<TKey, TValue> ReadXml(XmlReader reader, XmlRootAttribute xmlRoot)
+		{
+			if (!CanRead(reader, xmlRoot))
 				XmlExceptions.ThrowXmlException(String.Format(
-					"Expected element <{0} xmlns='{1}' ...>.", 
+					"Unexpected element <{0} xmlns='{1}' ...>.",
 					reader.LocalName, reader.NamespaceURI),
 					reader);
-
-			// TODO: we could add a constraint to verify that the TKey and TValue types 
-			// match (or are base classes of?) the same attributes on the xml, so as to 
-			// guarantee successful deserialization.
-			//var keyType = Type.GetType(reader.GetAttribute(XmlNames.AttributeNames.TKey));
-			//var valueType = Type.GetType(reader.GetAttribute(XmlNames.AttributeNames.TValue));
 
 			var extensions = new SerializableDictionary<TKey, TValue>();
 			((IXmlSerializable)extensions).ReadXml(reader);
@@ -95,35 +113,36 @@ namespace System.Collections.Generic
 
 		public void WriteXml(XmlWriter writer)
 		{
-			writer.WriteStartElement("dictionary", this.XmlNamespaceURI);
+			writer.WriteStartElement(XmlRoot.ElementName, XmlRoot.Namespace);
 			((IXmlSerializable)this).WriteXml(writer);
 			writer.WriteEndElement();
 		}
 
 		void IXmlSerializable.ReadXml(XmlReader reader)
 		{
-			if (reader.ReadToDescendant("entry", XmlNamespaceURI))
+			var rootNamespaceUri = reader.NamespaceURI;
+			if (reader.ReadToDescendant("entry", rootNamespaceUri))
 			{
 				var depth = reader.Depth;
 				do
 				{
 					using (var entry = reader.ReadSubtree())
 					{
-						if (reader.ReadToDescendant("key", XmlNamespaceURI))
+						if (reader.ReadToDescendant("key", rootNamespaceUri))
 						{
 							bool skip = false;
 							var tKey = ReadType(reader, typeof(TKey), out skip);
 							if (skip) continue;
 
-							var keySerializer = serializerFactory.CreateSerializer(tKey, new XmlRootAttribute("key"));
+							var keySerializer = serializerFactory.CreateSerializer(tKey, new XmlRootAttribute("key") { Namespace = rootNamespaceUri });
 							var key = keySerializer.Deserialize(reader.ReadSubtree());
 
-							if (reader.ReadToNextSibling("value", XmlNamespaceURI))
+							if (reader.ReadToNextSibling("value", rootNamespaceUri))
 							{
 								var tValue = ReadType(reader, typeof(TValue), out skip);
 								if (skip) continue;
 
-								var valueSerializer = serializerFactory.CreateSerializer(tValue, new XmlRootAttribute("value"));
+								var valueSerializer = serializerFactory.CreateSerializer(tValue, new XmlRootAttribute("value") { Namespace = rootNamespaceUri });
 								var value = valueSerializer.Deserialize(reader.ReadSubtree());
 
 								Add((TKey)key, (TValue)value);
@@ -145,14 +164,18 @@ namespace System.Collections.Generic
 				// Serialize Key
 				var keyType = item.Key.GetType();
 				var keyWriter = keyType == tKey ? writer : new TypeWriter(writer, keyType);
-				var keySerializer = serializerFactory.CreateSerializer(keyType, new XmlRootAttribute("key") { Namespace = XmlNamespaceURI });
+				keyWriter = new NonXsiXmlWriter(keyWriter);
+				var keySerializer = serializerFactory.CreateSerializer(keyType, new XmlRootAttribute("key") { Namespace = XmlRoot.Namespace });
 				keySerializer.Serialize(keyWriter, item.Key, serializerNamespaces);
+				keyWriter.Flush();
 
 				// Serialize Value
 				var valueType = item.Value != null ? item.Value.GetType() : tValue;
 				var valueWriter = valueType == tValue ? writer : new TypeWriter(writer, valueType);
-				var valueSerializer = serializerFactory.CreateSerializer(valueType, new XmlRootAttribute("value") { Namespace = XmlNamespaceURI });
+				valueWriter = new NonXsiXmlWriter(valueWriter);
+				var valueSerializer = serializerFactory.CreateSerializer(valueType, new XmlRootAttribute("value") { Namespace = XmlRoot.Namespace });
 				valueSerializer.Serialize(valueWriter, item.Value, serializerNamespaces);
+				valueWriter.Flush();
 
 				writer.WriteEndElement();
 			}
@@ -207,6 +230,46 @@ namespace System.Collections.Generic
 					base.WriteAttributeString("type", typeName);
 					root = false;
 				}
+			}
+		}
+
+		private class NonXsiXmlWriter : XmlWrappingWriter
+		{
+			bool skip = false;
+
+			public NonXsiXmlWriter(XmlWriter baseWriter)
+				: base(baseWriter)
+			{
+			}
+
+			public override void WriteStartAttribute(string prefix, string localName, string ns)
+			{
+				if (prefix == "xmlns" && (localName == "xsd" || localName == "xsi"))
+				{
+					skip = true;
+					return;
+				}
+
+				base.WriteStartAttribute(prefix, localName, ns);
+			}
+
+			public override void WriteString(string text)
+			{
+				if (skip)
+					return;
+
+				base.WriteString(text);
+			}
+
+			public override void WriteEndAttribute()
+			{
+				if (skip)
+				{
+					skip = false;
+					return;
+				}
+
+				base.WriteEndAttribute();
 			}
 		}
 
