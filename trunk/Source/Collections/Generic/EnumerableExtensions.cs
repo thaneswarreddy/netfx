@@ -23,6 +23,25 @@
 
 		/// <summary>
 		/// Allows chaining actions on a set of items for later processing, filtering 
+		/// or projection (transformation), ignoring exceptions that might happen in the action.
+		/// </summary>
+		/// <returns>An enumeration with the same items as the source.</returns>
+		public static IEnumerable<T> TryDo<T>(this IEnumerable<T> source, Action<T> action)
+		{
+			foreach (var item in source)
+			{
+				try
+				{
+					action(item);
+				}
+				catch {} 
+				
+				yield return item;
+			}
+		}
+
+		/// <summary>
+		/// Allows chaining actions on a set of items for later processing, filtering 
 		/// or projection (transformation).
 		/// </summary>
 		/// <returns>An enumeration with the same items as the source.</returns>
