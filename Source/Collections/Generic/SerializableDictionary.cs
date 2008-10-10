@@ -159,25 +159,34 @@ namespace System.Collections.Generic
 			var tValue = typeof(TValue);
 			foreach (var item in this)
 			{
-				writer.WriteStartElement("entry");
+				try
+				{
+					// Ensure we can create the serializers first for the types
+					var keyType = item.Key.GetType();
+					var keyWriter = keyType == tKey ? writer : new TypeWriter(writer, keyType);
+					keyWriter = new NonXsiXmlWriter(keyWriter);
+					var keySerializer = serializerFactory.CreateSerializer(keyType, new XmlRootAttribute("key") { Namespace = XmlRoot.Namespace });
 
-				// Serialize Key
-				var keyType = item.Key.GetType();
-				var keyWriter = keyType == tKey ? writer : new TypeWriter(writer, keyType);
-				keyWriter = new NonXsiXmlWriter(keyWriter);
-				var keySerializer = serializerFactory.CreateSerializer(keyType, new XmlRootAttribute("key") { Namespace = XmlRoot.Namespace });
-				keySerializer.Serialize(keyWriter, item.Key, serializerNamespaces);
-				keyWriter.Flush();
+					var valueType = item.Value != null ? item.Value.GetType() : tValue;
+					var valueWriter = valueType == tValue ? writer : new TypeWriter(writer, valueType);
+					valueWriter = new NonXsiXmlWriter(valueWriter);
+					var valueSerializer = serializerFactory.CreateSerializer(valueType, new XmlRootAttribute("value") { Namespace = XmlRoot.Namespace });
 
-				// Serialize Value
-				var valueType = item.Value != null ? item.Value.GetType() : tValue;
-				var valueWriter = valueType == tValue ? writer : new TypeWriter(writer, valueType);
-				valueWriter = new NonXsiXmlWriter(valueWriter);
-				var valueSerializer = serializerFactory.CreateSerializer(valueType, new XmlRootAttribute("value") { Namespace = XmlRoot.Namespace });
-				valueSerializer.Serialize(valueWriter, item.Value, serializerNamespaces);
-				valueWriter.Flush();
+					writer.WriteStartElement("entry");
 
-				writer.WriteEndElement();
+					// Serialize Key
+					keySerializer.Serialize(keyWriter, item.Key, serializerNamespaces);
+					keyWriter.Flush();
+
+					// Serialize Value
+					valueSerializer.Serialize(valueWriter, item.Value, serializerNamespaces);
+					valueWriter.Flush();
+
+					writer.WriteEndElement();
+				}
+				catch (Exception)
+				{
+				}
 			}
 		}
 
