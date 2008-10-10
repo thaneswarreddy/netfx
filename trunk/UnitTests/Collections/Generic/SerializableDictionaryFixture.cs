@@ -201,6 +201,54 @@ namespace NetFx.UnitTests.Collections.Generic
 			Assert.AreEqual(2, dictionary.Count);
 		}
 
+		[Test]
+		public void ShouldIgnorePrivateClassExtension()
+		{
+			var dictionary = new SerializableDictionary<string, object>();
+
+			dictionary.Add("foo", new PrivateClass());
+
+			var serializer = new XmlSerializer(dictionary.GetType());
+
+			using (var writer = XmlWriter.Create(Console.Out, new XmlWriterSettings { Indent = true }))
+			{
+				serializer.Serialize(writer, dictionary);
+			}
+
+			var mem = new MemoryStream();
+			serializer.Serialize(mem, dictionary);
+
+			mem.Position = 0;
+
+			var deserialized = (Dictionary<string, object>)serializer.Deserialize(mem);
+
+			Assert.AreEqual(0, deserialized.Count);			
+		}
+
+		[Test]
+		public void ShouldIgnorePublicClassNoParameterlessCtor()
+		{
+			var dictionary = new SerializableDictionary<string, object>();
+
+			dictionary.Add("foo", new PublicClassNoCtor(true));
+
+			var serializer = new XmlSerializer(dictionary.GetType());
+
+			using (var writer = XmlWriter.Create(Console.Out, new XmlWriterSettings { Indent = true }))
+			{
+				serializer.Serialize(writer, dictionary);
+			}
+
+			var mem = new MemoryStream();
+			serializer.Serialize(mem, dictionary);
+
+			mem.Position = 0;
+
+			var deserialized = (Dictionary<string, object>)serializer.Deserialize(mem);
+
+			Assert.AreEqual(0, deserialized.Count);
+		}
+
 		[XmlRoot("root", Namespace = "xml-mvp")]
 		public class Root
 		{
@@ -223,6 +271,17 @@ namespace NetFx.UnitTests.Collections.Generic
 		public class Bar
 		{
 			public string Value { get; set; }
+		}
+
+		private class PrivateClass
+		{
+		}
+
+		public class PublicClassNoCtor
+		{
+			public PublicClassNoCtor(bool value)
+			{
+			}
 		}
 	}
 }
