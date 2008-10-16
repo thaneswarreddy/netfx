@@ -25,11 +25,11 @@ namespace System.Diagnostics
 	/// <code>
 	/// public class MyComponent
 	/// {
-	///		static readonly ITraceSource traceSource = Tracer.GetSource(typeof(MyComponent));
+	///		static readonly ITraceSource tracer = Tracer.GetSourceFor<MyComponent>();
 	///		
 	///		public MyComponent()
 	///		{
-	///			traceSource.TraceInformation("MyComponent constructed!");
+	///			tracer.TraceInformation("MyComponent constructed!");
 	///		}
 	/// }
 	/// </code>
