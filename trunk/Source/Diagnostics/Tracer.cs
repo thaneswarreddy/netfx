@@ -5,7 +5,9 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
+#if !NET20
 using System.Linq;
+#endif
 
 namespace System.Diagnostics
 {
@@ -302,6 +304,7 @@ namespace System.Diagnostics
 			return source;
 		}
 
+#if !NET20
 		internal static void AddListener(string sourceName, TraceListener listener)
 		{
 			var query = (from keyPair in cachedCompositeSources
@@ -349,6 +352,7 @@ namespace System.Diagnostics
 				}
 			}
 		}
+#endif
 
 		internal static void SetLoggingLevel(string sourceName, SourceLevels sourceLevels)
 		{
