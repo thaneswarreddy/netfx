@@ -25,6 +25,7 @@
     <CodeAnalysisRules>-Microsoft.Design#CA2210</CodeAnalysisRules>
     <DocumentationFile>bin\Debug\NetFx.xml</DocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -77,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Collections\Generic\CovariantExtensions.cs" />
     <Compile Include="Collections\Generic\SerializableDictionary.cs" />
+    <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="IHideObjectMembers.cs" />
     <Compile Include="Collections\Generic\EnumerableExtensions.cs" />
