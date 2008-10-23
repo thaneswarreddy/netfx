@@ -26,11 +26,11 @@ namespace System.Web.Mvc
 		/// <typeparam name="T">Type of the controller to redirect to. Can be omitted as it can be inferred from the action type.</typeparam>
 		/// <param name="controller">The controller performing the redirect.</param>
 		/// <param name="action">The action containing the redirect.</param>
-		public static void RedirectToAction<T>(this Controller controller, Expression<Action<T>> action)
+		public static RedirectResult RedirectToAction<T>(this ControllerBase controller, Expression<Action<T>> action)
 			where T : Controller
 		{
 			string target = controller.ActionUrl<T>(action);
-			controller.HttpContext.Response.Redirect(target);
+			return new RedirectResult(target);
 		}
 
 		/// <summary>
@@ -41,7 +41,7 @@ namespace System.Web.Mvc
 		/// <typeparam name="T">Type of the controller to call to. Can be omitted as it can be inferred from the action type.</typeparam>
 		/// <param name="controller">The controller performing the call.</param>
 		/// <param name="action">The action containing the call.</param>
-		public static string ActionUrl<T>(this Controller controller, Expression<Action<T>> action)
+		public static string ActionUrl<T>(this ControllerBase controller, Expression<Action<T>> action)
 			where T : Controller
 		{
 			var call = ControllerExpression.GetMethodCall<T>(action);
