@@ -96,12 +96,20 @@
     <Compile Include="ServiceModel\ServiceException.cs" />
     <Compile Include="ServiceModel\Web\HttpContextIdentityPolicy.cs" />
     <Compile Include="ServiceModel\Web\Wrappers.cs" />
+    <Compile Include="Web\Mvc\ClientStatusResult.cs" />
+    <Compile Include="Web\Mvc\CompositeResult.cs" />
+    <Compile Include="Web\Mvc\ControllerBatchResultsExtensions.cs" />
     <Compile Include="Web\Mvc\ControllerExpression.cs" />
     <Compile Include="Web\Mvc\ControllerExtensions.cs" />
+    <Compile Include="Web\Mvc\JavascriptResult.cs" />
     <Compile Include="Web\Mvc\UrlHelperExtensions.cs" />
     <Compile Include="Web\UriExtensions.cs" />
     <Compile Include="Xml\XmlWrappingReader.cs" />
     <Compile Include="Xml\XmlWrappingWriter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web\Mvc\Content\status.css" />
+    <Content Include="Web\Mvc\Content\status.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

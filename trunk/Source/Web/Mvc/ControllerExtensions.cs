@@ -6,6 +6,7 @@
  *		ControllerExpressions.cs
  *		
  * Authors: Daniel Cazzulino - daniel@cazzulino.com
+ *          Juan Wajnerman - jwajnerman@manas.com.ar
  */
 
 using System.Linq.Expressions;
@@ -27,6 +28,20 @@ namespace System.Web.Mvc
 		/// <param name="controller">The controller performing the redirect.</param>
 		/// <param name="action">The action containing the redirect.</param>
 		public static RedirectResult RedirectToAction<T>(this ControllerBase controller, Expression<Action<T>> action)
+			where T : Controller
+		{
+			string target = controller.ActionUrl<T>(action);
+			return new RedirectResult(target);
+		}
+
+		/// <summary>
+		/// Performs a redirect based on an expression representing an 
+		/// invocation to an action on the same controller that may include arguments.
+		/// </summary>
+		/// <typeparam name="T">Type of the controller to redirect to. Can be omitted as it can be inferred from the current controller.</typeparam>
+		/// <param name="controller">The controller performing the redirect.</param>
+		/// <param name="action">The action containing the redirect.</param>
+		public static RedirectResult RedirectToAction<T>(this T controller, Expression<Action<T>> action)
 			where T : Controller
 		{
 			string target = controller.ActionUrl<T>(action);
