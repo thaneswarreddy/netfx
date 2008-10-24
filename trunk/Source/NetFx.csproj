@@ -102,6 +102,7 @@
     <Compile Include="Web\Mvc\ControllerBatchResultsExtensions.cs" />
     <Compile Include="Web\Mvc\ControllerExpression.cs" />
     <Compile Include="Web\Mvc\ControllerExtensions.cs" />
+    <Compile Include="Web\Mvc\FileResult.cs" />
     <Compile Include="Web\Mvc\JavascriptResult.cs" />
     <Compile Include="Web\Mvc\StatusCodeResult.cs" />
     <Compile Include="Web\Mvc\SyndicationFeedResult.cs" />
