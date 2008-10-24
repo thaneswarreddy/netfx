@@ -1,0 +1,54 @@
+﻿#status 
+{	
+	font-family: 'Arial Rounded MT Bold';
+	padding: 0pt 15px 1px;
+	position:fixed; 
+	left:50%;
+	z-index: 1000;
+}
+
+#status a
+{
+	text-decoration: none;
+}
+
+.status_invisible 
+{
+	display: none;
+}
+
+.status_info
+{
+	display: block;
+	color: Black;
+	background-color: #CCFFCC;
+}
+
+.status_info a 
+{
+	color: Blue;
+}
+
+.status_warning
+{
+	display: block;
+	color: Black;
+	background-color: #FFFF99;
+}
+
+.status_warning a 
+{
+	color: Blue;
+}
+
+.status_error
+{
+	display: block;
+	color: White;
+	background-color: #CC3300;
+}
+
+.status_error a 
+{
+	color: Yellow;
+}
