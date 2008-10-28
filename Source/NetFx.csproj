@@ -106,6 +106,7 @@
     <Compile Include="Web\Mvc\JavascriptResult.cs" />
     <Compile Include="Web\Mvc\StatusCodeResult.cs" />
     <Compile Include="Web\Mvc\SyndicationFeedResult.cs" />
+    <Compile Include="Web\Mvc\TextResult.cs" />
     <Compile Include="Web\Mvc\UrlHelperExtensions.cs" />
     <Compile Include="Web\UriExtensions.cs" />
     <Compile Include="Xml\XmlWrappingReader.cs" />
