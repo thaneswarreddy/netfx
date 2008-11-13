@@ -95,5 +95,25 @@ namespace System.Web.Mvc
 
 			return string.Format("{0}://{1}{2}", schema, host, virtualPath);
 		}
+
+		/// <summary>
+		/// Returns the full URL for performing an invocation to an action based
+		/// on an expression representing an invocation to a controller method
+		/// that may include arguments.
+		/// </summary>
+		/// <typeparam name="T">Type of the controller to call to. Can be omitted as it can be inferred from the action type.</typeparam>
+		/// <param name="controller">The controller performing the call.</param>
+		/// <param name="action">The action containing the call.</param>
+		public static string FullActionUrl<T>(this Controller controller, Expression<Action<T>> action, string scheme)
+			where T : Controller
+		{
+#if DEBUG
+			scheme = "http";
+#endif
+			string host = controller.HttpContext.Request.Url.Authority;
+			string virtualPath = ActionUrl(controller, action);
+
+			return string.Format("{0}://{1}{2}", scheme, host, virtualPath);
+		}
 	}
 }
