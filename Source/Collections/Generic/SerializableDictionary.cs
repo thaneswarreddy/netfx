@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Reflection.Emit;
+using System.Reflection;
 
 namespace System.Collections.Generic
 {
@@ -36,6 +38,9 @@ namespace System.Collections.Generic
 	[XmlRoot("dictionary")]
 	public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IXmlSerializable
 	{
+		private static readonly Dictionary<CacheKey, Func<XmlSerializer>> keySerializers = new Dictionary<CacheKey, Func<XmlSerializer>>();
+		private static readonly Dictionary<CacheKey, Func<XmlSerializer>> valueSerializers = new Dictionary<CacheKey, Func<XmlSerializer>>();
+
 		private static readonly XmlSerializerFactory serializerFactory = new XmlSerializerFactory();
 		private static readonly XmlSerializerNamespaces serializerNamespaces = new XmlSerializerNamespaces(new[] { new XmlQualifiedName("", "") });
 
@@ -133,7 +138,7 @@ namespace System.Collections.Generic
 							var tKey = ReadType(reader, typeof(TKey), out skip);
 							if (skip) continue;
 
-							var keySerializer = serializerFactory.CreateSerializer(tKey, new XmlRootAttribute("key") { Namespace = rootNamespaceUri });
+							var keySerializer = GetSerializer(keySerializers, tKey, new XmlRootAttribute("key") { Namespace = rootNamespaceUri });
 							var key = keySerializer.Deserialize(reader.ReadSubtree());
 
 							if (reader.ReadToNextSibling("value", rootNamespaceUri))
@@ -141,7 +146,7 @@ namespace System.Collections.Generic
 								var tValue = ReadType(reader, typeof(TValue), out skip);
 								if (skip) continue;
 
-								var valueSerializer = serializerFactory.CreateSerializer(tValue, new XmlRootAttribute("value") { Namespace = rootNamespaceUri });
+								var valueSerializer = GetSerializer(valueSerializers, tValue, new XmlRootAttribute("value") { Namespace = rootNamespaceUri });
 								var value = valueSerializer.Deserialize(reader.ReadSubtree());
 
 								Add((TKey)key, (TValue)value);
@@ -164,12 +169,12 @@ namespace System.Collections.Generic
 					var keyType = item.Key.GetType();
 					var keyWriter = keyType == tKey ? writer : new TypeWriter(writer, keyType);
 					keyWriter = new NonXsiXmlWriter(keyWriter);
-					var keySerializer = serializerFactory.CreateSerializer(keyType, new XmlRootAttribute("key") { Namespace = XmlRoot.Namespace });
+					var keySerializer = GetSerializer(keySerializers, keyType, new XmlRootAttribute("key") { Namespace = XmlRoot.Namespace });
 
 					var valueType = item.Value != null ? item.Value.GetType() : tValue;
 					var valueWriter = valueType == tValue ? writer : new TypeWriter(writer, valueType);
 					valueWriter = new NonXsiXmlWriter(valueWriter);
-					var valueSerializer = serializerFactory.CreateSerializer(valueType, new XmlRootAttribute("value") { Namespace = XmlRoot.Namespace });
+					var valueSerializer = GetSerializer(valueSerializers, valueType, new XmlRootAttribute("value") { Namespace = XmlRoot.Namespace });
 
 					writer.WriteStartElement("entry");
 
@@ -212,6 +217,49 @@ namespace System.Collections.Generic
 			}
 
 			return result;
+		}
+
+		private XmlSerializer GetSerializer(Dictionary<CacheKey, Func<XmlSerializer>> cache, Type forType, XmlRootAttribute root)
+		{
+			Func<XmlSerializer> factory;
+			var key = new CacheKey { Type = forType, Root = root };
+			if (!cache.TryGetValue(key, out factory))
+			{
+				var serializer = serializerFactory.CreateSerializer(forType, root);
+				factory = BuildSerializerFactory(serializer.GetType());
+				cache[key] = factory;
+			}
+
+			return factory();
+		}
+
+		private Func<XmlSerializer> BuildSerializerFactory(Type serializerType)
+		{
+			// generate new serializerType() anonymous factory function.
+			var method = new DynamicMethod("KeyString", serializerType, null);
+
+			// Preparing Reflection instances
+			var ctor = serializerType.GetConstructor(
+				BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+				null, new Type[] { }, null);
+			// Setting return type
+			// Adding parameters
+			ILGenerator gen = method.GetILGenerator();
+			// Preparing locals
+			LocalBuilder lb = gen.DeclareLocal(serializerType);
+			// Preparing labels
+			Label label9 = gen.DefineLabel();
+			// Writing body
+			gen.Emit(OpCodes.Nop);
+			gen.Emit(OpCodes.Newobj, ctor);
+			gen.Emit(OpCodes.Stloc_0);
+			gen.Emit(OpCodes.Br_S, label9);
+			gen.MarkLabel(label9);
+			gen.Emit(OpCodes.Ldloc_0);
+			gen.Emit(OpCodes.Ret);
+			// finished
+
+			return (Func<XmlSerializer>)method.CreateDelegate(typeof(Func<XmlSerializer>));
 		}
 
 		private class TypeWriter : XmlWrappingWriter
@@ -371,6 +419,31 @@ There is an error in the XML document or fragment:
 							return base.IsEmptyElement;
 					}
 				}
+			}
+		}
+
+		private class CacheKey
+		{
+			public Type Type;
+			public XmlRootAttribute Root;
+
+			public override bool Equals(object obj)
+			{
+				if (Object.ReferenceEquals(this, obj)) return true;
+
+				var x = this;
+				var y = obj as CacheKey;
+
+				if (Object.Equals(null, y)) return false;
+
+				return x.Type == y.Type &&
+					x.Root.ElementName == y.Root.ElementName &&
+					x.Root.Namespace == y.Root.Namespace;
+			}
+
+			public override int GetHashCode()
+			{
+				return this.Type.GetHashCode() ^ this.Root.ElementName.GetHashCode() ^ this.Root.Namespace.GetHashCode();
 			}
 		}
 	}

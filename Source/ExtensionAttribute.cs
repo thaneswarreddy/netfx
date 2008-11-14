@@ -6,6 +6,9 @@
  */
 namespace System.Runtime.CompilerServices
 {
+	/// <summary>
+	/// .NET compiler attribute to enable extension methods on .NET 2.0 targeted assemblies.
+	/// </summary>
 	public class ExtensionAttribute : Attribute
 	{
 	}
