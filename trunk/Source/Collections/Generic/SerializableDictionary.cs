@@ -8,6 +8,9 @@ using System.Reflection;
 
 namespace System.Collections.Generic
 {
+#if NET20
+    internal delegate T Func<T>();
+#endif
 	/// <summary>
 	/// Implements a <see cref="Dictionary{TKey, TValue}"/> that can be safely 
 	/// serialized to XML and deserialized back, preserving type information.
