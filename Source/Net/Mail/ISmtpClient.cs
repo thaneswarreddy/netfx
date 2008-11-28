@@ -9,7 +9,7 @@ namespace System.Net.Mail
 	/// <summary>
 	/// Interface implemented by SMTP clients.
 	/// </summary>
-	public interface ISmtpClient : IMailClient
+	public interface ISmtpClient : IDisposable
 	{
 		/// <summary>
 		/// Sends the specified e-mail message to an SMTP server for delivery. 
