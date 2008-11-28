@@ -8,7 +8,7 @@ namespace System.Net.Mail
 	/// <summary>
 	/// Interface implemented by POP3 clients.
 	/// </summary>
-	public interface IPopClient : IMailClient
+	public interface IPopClient : IDisposable
 	{
 		/// <summary>
 		/// Receives all e-mail messages in the inbox. 

@@ -82,7 +82,6 @@
     <Compile Include="Guard.cs" />
     <Compile Include="IHideObjectMembers.cs" />
     <Compile Include="Collections\Generic\EnumerableExtensions.cs" />
-    <Compile Include="Net\Mail\IMailClient.cs" />
     <Compile Include="Net\Mail\IPopClient.cs" />
     <Compile Include="Net\Mail\ISmtpClient.cs" />
     <Compile Include="Net\Mail\SmtpClientWrapper.cs" />
