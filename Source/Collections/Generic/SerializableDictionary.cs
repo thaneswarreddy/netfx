@@ -220,7 +220,8 @@ namespace System.Collections.Generic
 			{
 				var type = Type.GetType(typeName);
 
-				if (type == null || !defaultType.IsAssignableFrom(type))
+				if (type == null || !defaultType.IsAssignableFrom(type) || 
+					!(type.IsPublic || type.IsNestedPublic))
 					shouldSkip = true;
 
 				if (type != null)
