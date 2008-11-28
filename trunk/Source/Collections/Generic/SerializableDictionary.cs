@@ -171,11 +171,18 @@ namespace System.Collections.Generic
 				{
 					// Ensure we can create the serializers first for the types
 					var keyType = item.Key.GetType();
+					var valueType = item.Value != null ? item.Value.GetType() : tValue;
+					
+					// Optimize if we know the data is not serializable up front.
+					if (!
+						(keyType.IsPublic || keyType.IsNestedPublic) && 
+						(valueType.IsPublic || valueType.IsNestedPublic))
+						continue;
+		
 					var keyWriter = keyType == tKey ? writer : new TypeWriter(writer, keyType);
 					keyWriter = new NonXsiXmlWriter(keyWriter);
 					var keySerializer = GetSerializer(keySerializers, keyType, new XmlRootAttribute("key") { Namespace = XmlRoot.Namespace });
 
-					var valueType = item.Value != null ? item.Value.GetType() : tValue;
 					var valueWriter = valueType == tValue ? writer : new TypeWriter(writer, valueType);
 					valueWriter = new NonXsiXmlWriter(valueWriter);
 					var valueSerializer = GetSerializer(valueSerializers, valueType, new XmlRootAttribute("value") { Namespace = XmlRoot.Namespace });
