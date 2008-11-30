@@ -51,7 +51,31 @@ namespace NetFx.UnitTests.Collections.Generic
             Assert.AreEqual("foo", dictionary[25]);
         }
 
-        [Test]
+		[Test]
+		public void ShouldNotEmitValueIfNullValue()
+		{
+			var mem = new MemoryStream();
+
+			var serializer = new XmlSerializer(typeof(SerializableDictionary<string, object>));
+			var dictionary = new SerializableDictionary<string, object>();
+
+			dictionary.Add("foo", "bar");
+			dictionary.Add("baz", null);
+
+			serializer.Serialize(mem, dictionary);
+
+			mem.Position = 0;
+
+			var xml = new XmlDocument();
+			xml.Load(mem);
+
+			Console.WriteLine(xml.OuterXml);
+
+			Assert.IsNotNull(xml.SelectSingleNode("/dictionary/entry/key[text() = 'baz']"));
+			Assert.IsNull(xml.SelectSingleNode("/dictionary/entry[key/text() = 'baz']/value"));
+		}
+
+		[Test]
         public void ShouldRoundtripXml()
         {
             var dictionary = new SerializableDictionary<string, object>();
@@ -126,7 +150,7 @@ namespace NetFx.UnitTests.Collections.Generic
         }
 
         [Test]
-        public void ShouldIgnoreElementsWithIncompatibleTypes()
+        public void ShouldIgnoreElementsWithIncompatibleKeyType()
         {
             var xml = @"
 <dictionary>
@@ -146,6 +170,45 @@ namespace NetFx.UnitTests.Collections.Generic
             Assert.AreEqual(1, dictionary.Count);
             Assert.AreEqual(true, dictionary["foo"]);
         }
+
+		[Test]
+		public void ShouldIgnoreElementsWithIncompatibleValueType()
+		{
+			var xml = @"
+<dictionary>
+	<entry>
+		<key>foo</key>
+		<value>25</value>
+	</entry>
+	<entry>
+		<key>bar</key>
+		<value type='System.Boolean'>true</value>
+	</entry>
+</dictionary>";
+
+			var serializer = new XmlSerializer(typeof(SerializableDictionary<string, int>));
+			var dictionary = (Dictionary<string, int>)serializer.Deserialize(new StringReader(xml));
+
+			Assert.AreEqual(1, dictionary.Count);
+			Assert.AreEqual(25, dictionary["foo"]);
+		}
+
+		[Test]
+		public void ShouldSetDefaultValueIfNoValueForKey()
+		{
+			var xml = @"
+<dictionary>
+	<entry>
+		<key>foo</key>
+	</entry>
+</dictionary>";
+
+			var serializer = new XmlSerializer(typeof(SerializableDictionary<string, int>));
+			var dictionary = (Dictionary<string, int>)serializer.Deserialize(new StringReader(xml));
+
+			Assert.AreEqual(1, dictionary.Count);
+			Assert.AreEqual(default(int), dictionary["foo"]);
+		}
 
         [Test]
         public void ShouldOverrideElementAndNamespace()
