@@ -80,6 +80,7 @@
     <Compile Include="Collections\Generic\SerializableDictionary.cs" />
     <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="Guard.cs" />
+    <Compile Include="ICloneable.cs" />
     <Compile Include="IHideObjectMembers.cs" />
     <Compile Include="Collections\Generic\EnumerableExtensions.cs" />
     <Compile Include="Net\Mail\IPopClient.cs" />
