@@ -187,24 +187,34 @@ namespace System.Collections.Generic
 					keyWriter = new NonXsiXmlWriter(keyWriter);
 					var keySerializer = GetSerializer(keySerializers, keyType, new XmlRootAttribute("key") { Namespace = XmlRoot.Namespace });
 
-					writer.WriteStartElement("entry");
-
-					// Serialize Key
-					keySerializer.Serialize(keyWriter, item.Key, serializerNamespaces);
-					keyWriter.Flush();
-
 					if (item.Value != null)
 					{
 						var valueWriter = valueType == tValue ? writer : new TypeWriter(writer, valueType);
 						valueWriter = new NonXsiXmlWriter(valueWriter);
 						var valueSerializer = GetSerializer(valueSerializers, valueType, new XmlRootAttribute("value") { Namespace = XmlRoot.Namespace });
 
+						writer.WriteStartElement("entry");
+						// Serialize Key
+						keySerializer.Serialize(keyWriter, item.Key, serializerNamespaces);
+						keyWriter.Flush();
+
 						// Serialize Value
 						valueSerializer.Serialize(valueWriter, item.Value, serializerNamespaces);
 						valueWriter.Flush();
-					}
 
-					writer.WriteEndElement();
+						// Make sure we close the entry tag.
+						writer.WriteEndElement();
+					}
+					else
+					{
+						writer.WriteStartElement("entry");
+						// Serialize Key
+						keySerializer.Serialize(keyWriter, item.Key, serializerNamespaces);
+						keyWriter.Flush();
+
+						// Make sure we close the entry tag.
+						writer.WriteEndElement();
+					}
 				}
 				catch (Exception)
 				{
