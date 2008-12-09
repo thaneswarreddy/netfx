@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Collections\Generic\CovariantExtensions.cs" />
     <Compile Include="Collections\Generic\SerializableDictionary.cs" />
+    <Compile Include="Diagnostics\EmailTraceListener.cs" />
     <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="ICloneable.cs" />
