@@ -377,81 +377,95 @@ namespace System.Diagnostics
 
 			public void Flush()
 			{
-				sources.ForEach(source => source.Flush());
+				TryEach(sources, source => source.Flush());
 			}
 
 			public void TraceData(TraceEventType eventType, int id, object data)
 			{
-				sources.ForEach(source => source.TraceData(eventType, id, data));
+				TryEach(sources, source => source.TraceData(eventType, id, data));
 			}
 
 			public void TraceData(TraceEventType eventType, int id, params object[] data)
 			{
-				sources.ForEach(source => source.TraceData(eventType, id, data));
+				TryEach(sources, source => source.TraceData(eventType, id, data));
 			}
 
 			public void TraceEvent(TraceEventType eventType, int id)
 			{
-				sources.ForEach(source => source.TraceEvent(eventType, id));
+				TryEach(sources, source => source.TraceEvent(eventType, id));
 			}
 
 			public void TraceEvent(TraceEventType eventType, int id, string format, params object[] args)
 			{
-				sources.ForEach(source => source.TraceEvent(eventType, id, format, args));
+				TryEach(sources, source => source.TraceEvent(eventType, id, format, args));
 			}
 
 			public void TraceEvent(TraceEventType eventType, int id, string message)
 			{
-				sources.ForEach(source => source.TraceEvent(eventType, id, message));
+				TryEach(sources, source => source.TraceEvent(eventType, id, message));
 			}
 
 			public void TraceInformation(string message)
 			{
-				sources.ForEach(source => source.TraceInformation(message));
+				TryEach(sources, source => source.TraceInformation(message));
 			}
 
 			public void TraceInformation(string format, params object[] args)
 			{
-				sources.ForEach(source => source.TraceInformation(format, args));
+				TryEach(sources, source => source.TraceInformation(format, args));
 			}
 
 			public void TraceVerbose(string message)
 			{
-				sources.ForEach(source => source.TraceEvent(TraceEventType.Verbose, 0, message));
+				TryEach(sources, source => source.TraceEvent(TraceEventType.Verbose, 0, message));
 			}
 
 			public void TraceVerbose(string format, params object[] args)
 			{
-				sources.ForEach(source => source.TraceEvent(TraceEventType.Verbose, 0, format, args));
+				TryEach(sources, source => source.TraceEvent(TraceEventType.Verbose, 0, format, args));
 			}
 
 			public void TraceTransfer(int id, string message, Guid relatedActivityId)
 			{
-				sources.ForEach(source => source.TraceTransfer(id, message, relatedActivityId));
+				TryEach(sources, source => source.TraceTransfer(id, message, relatedActivityId));
 			}
 
 			public void TraceError(Exception exception, string message)
 			{
 				string logmessage = message + Environment.NewLine + exception.ToString();
 
-				sources.ForEach(source => source.TraceEvent(TraceEventType.Error, 0, logmessage));
+				TryEach(sources, source => source.TraceEvent(TraceEventType.Error, 0, logmessage));
 			}
 
 			public void TraceError(Exception exception, string format, params object[] args)
 			{
 				string logmessage = format + Environment.NewLine + exception.ToString();
 
-				sources.ForEach(source => source.TraceEvent(TraceEventType.Error, 0, logmessage, args));
+				TryEach(sources, source => source.TraceEvent(TraceEventType.Error, 0, logmessage, args));
 			}
 
 			public void TraceWarning(string format, params object[] args)
 			{
-				sources.ForEach(source => source.TraceEvent(TraceEventType.Warning, 0, format, args));
+				TryEach(sources, source => source.TraceEvent(TraceEventType.Warning, 0, format, args));
 			}
 
 			public void TraceWarning(string message)
 			{
-				sources.ForEach(source => source.TraceEvent(TraceEventType.Warning, 0, message));
+				TryEach(sources, source => source.TraceEvent(TraceEventType.Warning, 0, message));
+			}
+
+			private void TryEach(IEnumerable<TraceSource> sources, Action<TraceSource> action)
+			{
+				// we're logging, so if anything fails here, we just swallow. 
+				// logging should never fail!
+				foreach (var source in sources)
+				{
+					try
+					{
+						action(source);
+					}
+					catch { }
+				}
 			}
 		}
 	}
