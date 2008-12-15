@@ -22,11 +22,11 @@ namespace System.Diagnostics
 		}
 
 		/// <summary>
-		/// Returns the "to" attribute which is the only supported configuration.
+		/// Returns the "to" and "enableSsl" attributes which are the only supported configurations.
 		/// </summary>
 		protected override string[] GetSupportedAttributes()
 		{
-			return new string[] { "to" };
+			return new string[] { "to", "enableSsl" };
 		}
 
 		/// <summary>
@@ -34,7 +34,45 @@ namespace System.Diagnostics
 		/// </summary>
 		public string To { get { return this.Attributes["to"]; } }
 
+		/// <summary>
+		/// Gets the recipients for the emails.
+		/// </summary>
+		public bool EnableSsl
+		{
+			get
+			{
+				if (String.IsNullOrEmpty(this.Attributes["enableSsl"]))
+					return false;
+
+				return Boolean.Parse(this.Attributes["enableSsl"]);
+			}
+		}
+
 		#region TraceListener overrides
+
+		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object[] args)
+		{
+			WriteLogEntry(id, -1, eventType, string.Empty, DateTime.UtcNow, Guid.Empty, null,
+				Environment.MachineName, currentDomain.FriendlyName, currentProcess.Id,
+				currentProcess.ProcessName, Thread.CurrentThread.Name, Thread.CurrentThread.ManagedThreadId,
+				String.Format(format, args));
+		}
+
+		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
+		{
+			WriteLogEntry(id, -1, eventType, string.Empty, DateTime.UtcNow, Guid.Empty, null,
+				Environment.MachineName, currentDomain.FriendlyName, currentProcess.Id,
+				currentProcess.ProcessName, Thread.CurrentThread.Name, Thread.CurrentThread.ManagedThreadId,
+				message);
+		}
+
+		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id)
+		{
+			WriteLogEntry(id, -1, eventType, string.Empty, DateTime.UtcNow, Guid.Empty, null,
+				Environment.MachineName, currentDomain.FriendlyName, currentProcess.Id,
+				currentProcess.ProcessName, Thread.CurrentThread.Name, Thread.CurrentThread.ManagedThreadId,
+				string.Empty);
+		}
 
 		public override void Write(string message)
 		{
@@ -84,6 +122,7 @@ namespace System.Diagnostics
 			var settings = (SmtpSection)ConfigurationManager.GetSection("system.net/mailSettings/smtp");
 
 			var client = new SmtpClient();
+			client.EnableSsl = this.EnableSsl;
 			client.Send(settings.From, this.To,
 				String.Format("{0}: {1}-{2}", severity, machineName, appDomainName),
 				String.Format(
