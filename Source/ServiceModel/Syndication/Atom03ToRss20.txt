@@ -1,0 +1,3 @@
+If changes are made to the stylesheets, regenerate the compiled XSLT transformation using:
+
+xsltc /out:Atom03ToRss20.dll /class:NetFx.ServiceModel.Syndication.Atom03ToRss20XslTransform atom03-to-rss20.xsl

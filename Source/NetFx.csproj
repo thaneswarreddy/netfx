@@ -38,6 +38,10 @@
     <CodeAnalysisRules>-Microsoft.Design#CA2210</CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Atom03ToRss20, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ServiceModel\Syndication\Atom03ToRss20.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.Web.Mvc.dll</HintPath>
@@ -99,6 +103,7 @@
     <Compile Include="ServiceModel\OperationContextWrapper.cs" />
     <Compile Include="ServiceModel\ServiceSecurityContextWrapper.cs" />
     <Compile Include="ServiceModel\ServiceException.cs" />
+    <Compile Include="ServiceModel\Syndication\LegacyFeedXmlReader.cs" />
     <Compile Include="ServiceModel\Web\HttpContextIdentityPolicy.cs" />
     <Compile Include="ServiceModel\Web\Wrappers.cs" />
     <Compile Include="Web\Mvc\BinaryResult.cs" />
@@ -118,8 +123,89 @@
     <Compile Include="Xml\XmlWrappingWriter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ServiceModel\Syndication\atom03-to-rss10.xsl">
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServiceModel\Syndication\atom03-to-rss20.xsl">
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServiceModel\Syndication\shared\rss.xsl">
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServiceModel\Syndication\shared\rss10.xsl">
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServiceModel\Syndication\shared\rss20.xsl">
+    </EmbeddedResource>
+    <Content Include="ServiceModel\Syndication\Atom03ToRss20.dll" />
+    <Content Include="ServiceModel\Syndication\Atom03ToRss20.txt" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\cmp.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\date-time.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\docbook-extensions.xml" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\allxsl2jref.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\build.xml" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\cmp.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\cmp.xml" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\date-time.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\docbook-extensions.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\example.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\jrefhtml.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\makehtml.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\markup.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\node.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\sflogo.gif" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\sflogo.png" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\stdlib.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\string.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\test\test.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\uri.html" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\xsl2jref.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\example.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\markup.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\math.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\node.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\stdlib.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\string.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\svg.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\compare.test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\date-time.test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\example.test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\gentest.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\markup.test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\math.test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\node.test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\results.css" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\results.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\string.test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\svg.test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\test.xml" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\test\uri.test.xsl" />
+    <Content Include="ServiceModel\Syndication\xsltsl-1.2.1\uri.xsl" />
     <Content Include="Web\Mvc\Content\status.css" />
     <Content Include="Web\Mvc\Content\status.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\ANNOUNCE" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\ChangeLog" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\CVS\Entries" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\CVS\Entries.Log" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\CVS\Repository" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\CVS\Root" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\CVS\Tag" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\ChangeLog" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\CVS\Entries" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\CVS\Entries.Log" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\CVS\Repository" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\CVS\Root" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\CVS\Tag" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\README" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\test\CVS\Entries" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\test\CVS\Repository" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\test\CVS\Root" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\doc\test\CVS\Tag" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\RELNOTES" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\test\.cvsignore" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\test\CVS\Entries" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\test\CVS\Repository" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\test\CVS\Root" />
+    <None Include="ServiceModel\Syndication\xsltsl-1.2.1\test\CVS\Tag" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
