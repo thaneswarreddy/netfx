@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ECECCF97-761E-43D3-9178-D22BCB5AC37B}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -65,6 +65,7 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Atom03ToRss20, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -93,6 +94,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Guard.cs">
+      <Link>Guard.cs</Link>
+    </Compile>
+    <Compile Include="..\Xml\XmlWrappingReader.cs">
+      <Link>Syndication\XmlWrappingReader.cs</Link>
+    </Compile>
     <Compile Include="Configuration\UsernameCredentialsElement.cs" />
     <Compile Include="DisposableChannel.cs" />
     <Compile Include="ErrorHandler.cs" />
@@ -102,8 +109,87 @@
     <Compile Include="OperationContextWrapper.cs" />
     <Compile Include="ServiceException.cs" />
     <Compile Include="ServiceSecurityContextWrapper.cs" />
+    <Compile Include="Syndication\LegacyFeedXmlReader.cs" />
     <Compile Include="Web\HttpContextIdentityPolicy.cs" />
     <Compile Include="Web\Wrappers.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Syndication\atom03-to-rss10.xsl" />
+    <Content Include="Syndication\atom03-to-rss20.xsl" />
+    <Content Include="Syndication\Atom03ToRss20.dll" />
+    <Content Include="Syndication\Atom03ToRss20.txt" />
+    <Content Include="Syndication\shared\rss.xsl" />
+    <Content Include="Syndication\shared\rss10.xsl" />
+    <Content Include="Syndication\shared\rss20.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\cmp.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\date-time.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\docbook-extensions.xml" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\allxsl2jref.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\build.xml" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\cmp.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\cmp.xml" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\date-time.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\docbook-extensions.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\example.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\jrefhtml.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\makehtml.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\markup.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\node.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\sflogo.gif" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\sflogo.png" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\stdlib.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\string.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\test\test.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\uri.html" />
+    <Content Include="Syndication\xsltsl-1.2.1\doc\xsl2jref.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\example.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\markup.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\math.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\node.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\stdlib.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\string.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\svg.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\compare.test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\date-time.test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\example.test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\gentest.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\markup.test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\math.test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\node.test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\results.css" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\results.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\string.test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\svg.test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\test.xml" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\test\uri.test.xsl" />
+    <Content Include="Syndication\xsltsl-1.2.1\uri.xsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Syndication\xsltsl-1.2.1\ANNOUNCE" />
+    <None Include="Syndication\xsltsl-1.2.1\ChangeLog" />
+    <None Include="Syndication\xsltsl-1.2.1\CVS\Entries" />
+    <None Include="Syndication\xsltsl-1.2.1\CVS\Entries.Log" />
+    <None Include="Syndication\xsltsl-1.2.1\CVS\Repository" />
+    <None Include="Syndication\xsltsl-1.2.1\CVS\Root" />
+    <None Include="Syndication\xsltsl-1.2.1\CVS\Tag" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\ChangeLog" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\CVS\Entries" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\CVS\Entries.Log" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\CVS\Repository" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\CVS\Root" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\CVS\Tag" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\README" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\test\CVS\Entries" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\test\CVS\Repository" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\test\CVS\Root" />
+    <None Include="Syndication\xsltsl-1.2.1\doc\test\CVS\Tag" />
+    <None Include="Syndication\xsltsl-1.2.1\RELNOTES" />
+    <None Include="Syndication\xsltsl-1.2.1\test\.cvsignore" />
+    <None Include="Syndication\xsltsl-1.2.1\test\CVS\Entries" />
+    <None Include="Syndication\xsltsl-1.2.1\test\CVS\Repository" />
+    <None Include="Syndication\xsltsl-1.2.1\test\CVS\Root" />
+    <None Include="Syndication\xsltsl-1.2.1\test\CVS\Tag" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
