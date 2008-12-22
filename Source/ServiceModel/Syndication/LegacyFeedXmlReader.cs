@@ -13,7 +13,11 @@ using System.IO;
 
 namespace System.ServiceModel.Syndication
 {
+#if NetFx	
 	public class LegacyFeedXmlReader : XmlWrappingReader
+#else
+	internal class LegacyFeedXmlReader : XmlWrappingReader
+#endif
 	{
 		static XslCompiledTransform atom03ToRss20;
 		MemoryStream mem;
