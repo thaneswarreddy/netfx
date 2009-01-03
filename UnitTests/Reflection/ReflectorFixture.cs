@@ -118,6 +118,13 @@ namespace System.Reflection.UnitTests
 		}
 
 		[Test]
+		public void ShouldPublicStaticReturnMethod()
+		{
+			MethodInfo info = Reflect.GetMethod(() => Mock.StaticReturnMethod());
+			Assert.That(info == typeof(Mock).GetMethod("StaticReturnMethod", BindingFlags.Static | BindingFlags.Public));
+		}
+
+		[Test]
 		public void ShouldPublicStaticProperty()
 		{
 			PropertyInfo info = Reflect.GetProperty(() => Mock.StaticProperty);
@@ -147,6 +154,7 @@ namespace System.Reflection.UnitTests
 		public class Mock
 		{
 			public static void StaticMethod() {}
+			public static string StaticReturnMethod() { return ""; }
 			public static int StaticProperty { get; set; }
 			public static int StaticField;
 
