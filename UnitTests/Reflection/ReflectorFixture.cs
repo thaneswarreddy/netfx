@@ -110,6 +110,27 @@ namespace System.Reflection.UnitTests
 			Assert.That(info == typeof(ReflectorFixture).GetMethod("NonPublicMethod", BindingFlags.Instance | BindingFlags.NonPublic));
 		}
 
+		[Test]
+		public void ShouldPublicStaticMethod()
+		{
+			MethodInfo info = Reflect.GetMethod(() => Mock.StaticMethod());
+			Assert.That(info == typeof(Mock).GetMethod("StaticMethod", BindingFlags.Static | BindingFlags.Public));
+		}
+
+		[Test]
+		public void ShouldPublicStaticProperty()
+		{
+			PropertyInfo info = Reflect.GetProperty(() => Mock.StaticProperty);
+			Assert.That(info == typeof(Mock).GetProperty("StaticProperty", BindingFlags.Static | BindingFlags.Public));
+		}
+
+		[Test]
+		public void ShouldPublicStaticField()
+		{
+			FieldInfo info = Reflect.GetField(() => Mock.StaticField);
+			Assert.That(info == typeof(Mock).GetField("StaticField", BindingFlags.Static | BindingFlags.Public));
+		}
+
 		private int NonPublicField;
 
 		private int NonPublicProperty
@@ -125,6 +146,10 @@ namespace System.Reflection.UnitTests
 
 		public class Mock
 		{
+			public static void StaticMethod() {}
+			public static int StaticProperty { get; set; }
+			public static int StaticField;
+
 			public int Value;
 			public bool PublicField;
 			private int valueProp;
