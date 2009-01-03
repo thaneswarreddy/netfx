@@ -100,7 +100,7 @@ namespace System.Reflection
 #if NetFx
 	public class Reflect<TTarget> : Reflect
 #else
-	internal class Reflect<TTarget>
+	internal class Reflect<TTarget> : Reflect
 #endif
 	{
 		private Reflect() {}
