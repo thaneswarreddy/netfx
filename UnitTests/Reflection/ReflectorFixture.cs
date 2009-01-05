@@ -138,6 +138,13 @@ namespace System.Reflection.UnitTests
 			Assert.That(info == typeof(Mock).GetField("StaticField", BindingFlags.Static | BindingFlags.Public));
 		}
 
+		[Test]
+		public void ShouldGetPublicConstructor()
+		{
+			ConstructorInfo info = Reflect.GetConstructor(() => new Mock());
+			Assert.That(info == typeof(Mock).GetConstructor(Type.EmptyTypes));
+		}
+
 		private int NonPublicField;
 
 		private int NonPublicProperty
