@@ -7,7 +7,8 @@ using System.Linq.Expressions;
 namespace System.Reflection
 {
 	/// <summary>
-	/// Provides strong-typed reflection for static members of any type.
+	/// Provides strong-typed reflection for static members of any type or calling 
+	/// object constructors (to retrieve the constructor <see cref="MethodInfo"/>).
 	/// </summary>
 #if NetFx
 	public class Reflect
@@ -15,7 +16,26 @@ namespace System.Reflection
 	internal class Reflect
 #endif
 	{
+		/// <summary>
+		/// Initializes the reflector class.
+		/// </summary>
 		protected Reflect() {}
+
+		/// <summary>
+		/// Gets the constructor represented in the lambda expression.
+		/// </summary>
+		/// <exception cref="ArgumentNullException">The <paramref name="constructor"/> is null.</exception>
+		/// <exception cref="ArgumentException">The <paramref name="constructor"/> is not a lambda expression or it does not represent a constructor invocation.</exception>
+		public static ConstructorInfo GetConstructor(Expression<Action> constructor)
+		{
+			if (constructor == null) throw new ArgumentNullException("constructor");
+
+			LambdaExpression lambda = constructor as LambdaExpression;
+			if (lambda == null) throw new ArgumentException("Not a lambda expression", "constructor");
+			if (lambda.Body.NodeType != ExpressionType.New) throw new ArgumentException("Not a constructor invocation", "constructor");
+
+			return ((NewExpression)lambda.Body).Constructor;
+		}
 
 		/// <summary>
 		/// Gets the method represented by the lambda expression.
