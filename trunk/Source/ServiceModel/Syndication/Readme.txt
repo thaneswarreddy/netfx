@@ -1,0 +1,1 @@
+The atom03-to-rss* stylesheets were created by Aaron Straup Cope.
