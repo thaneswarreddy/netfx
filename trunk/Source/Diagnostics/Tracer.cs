@@ -104,6 +104,14 @@ namespace System.Diagnostics
 		/// </summary>
 		void TraceError(Exception exception, string message);
 		/// <summary>
+		/// Traces an error, using the format and arguments.
+		/// </summary>
+		void TraceError(string format, params object[] args);
+		/// <summary>
+		/// Traces an error and its corresponding message.
+		/// </summary>
+		void TraceError(string message);
+		/// <summary>
 		/// Traces a warning, using the format and arguments to build the message.
 		/// </summary>
 		void TraceWarning(string format, params object[] args);
@@ -442,6 +450,16 @@ namespace System.Diagnostics
 				string logmessage = format + Environment.NewLine + exception.ToString();
 
 				TryEach(sources, source => source.TraceEvent(TraceEventType.Error, 0, logmessage, args));
+			}
+
+			public void TraceError(string message)
+			{
+				TryEach(sources, source => source.TraceEvent(TraceEventType.Error, 0, message));
+			}
+
+			public void TraceError(string format, params object[] args)
+			{
+				TryEach(sources, source => source.TraceEvent(TraceEventType.Error, 0, format, args));
 			}
 
 			public void TraceWarning(string format, params object[] args)
