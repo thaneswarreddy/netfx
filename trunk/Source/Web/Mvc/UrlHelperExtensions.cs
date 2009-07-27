@@ -27,7 +27,7 @@ namespace System.Web.Mvc
 			values.Add("action", actionName);
 			values.Add("controller", controllerName);
 
-			var vpd = RouteTable.Routes.GetVirtualPath(helper.ViewContext, values);
+			var vpd = RouteTable.Routes.GetVirtualPath(helper.RequestContext, values);
 			string target = null;
 			if (vpd != null)
 			{
