@@ -17,16 +17,12 @@ namespace NetFx.UnitTests.Web.Mvc
 		{
 			var http = new Mock<HttpContextBase>();
 			http.CallBase = false;
-			var context = new ViewContext(
+			var context = new RequestContext(
 				http.Object, 
 				new System.Web.Routing.RouteData(
 					new Route("foo/{id}/{enabled}", 
 						new Mock<IRouteHandler>().Object),
-					new Mock<IRouteHandler>().Object), 
-				new FooController(), 
-				"Foo",
-				new ViewDataDictionary(), 
-				new TempDataDictionary());
+					new Mock<IRouteHandler>().Object));
 
 			var helper = new UrlHelper(context);
 
