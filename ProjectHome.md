@@ -1,0 +1,3 @@
+Miscellaneous tools for .NET complementing the framework, either as extension methods or small classes that encapsulate or provide missing behavior.
+
+Intended usage is as linked files in your project. Most files are self contained, unless otherwise noted at the top of the file, so typically you only need to link to the features you need. All classes are defined as internal, as they are intended to be included as links in your own project, to avoid creating an external dependency.
